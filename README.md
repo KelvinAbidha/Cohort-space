@@ -2,7 +2,7 @@
 
 Cohort Space is a modern, academic workspace management hub designed to mitigate social loafing by providing transparent accountability through shared task boards, resource vaults, and clear milestones.
 
-## 🚀 Quick Start
+## Quick Start
 
 This project is organized as a monorepo containing both a React frontend and an Express/Prisma backend.
 
@@ -66,12 +66,12 @@ npm run dev
 - **Frontend:** http://localhost:5173
 - **Backend API:** http://localhost:5000
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Frontend:** React, Vite, Tailwind CSS v4, React Router, Lucide Icons, Axios.
 - **Backend:** Node.js, Express, Prisma ORM.
 - **Database:** SQLite (local development).
 
-## ⚠️ Important Note for Contributors
+## Important Note for Contributors
 
 **DO NOT** commit your local `.env` or `*.db` files to Git. The `.gitignore` at the root of this repository is configured to prevent this. This ensures everyone on the team has an isolated environment for safe, conflict-free testing.
