@@ -1,0 +1,79 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  regNumber String   @unique // The primary login identifier
+  name      String
+  pin       String   // 4-digit personal PIN
+  memberships Member[]
+}
+
+model Unit {
+  id         Int         @id @default(autoincrement())
+  name       String      @unique // e.g. "Software Quality Assurance"
+  workspaces Workspace[]
+}
+
+model Workspace {
+  id         Int         @id @default(autoincrement())
+  name       String      @unique
+  code       String      @unique  // Short identifier
+  unitId     Int
+  unit       Unit        @relation(fields: [unitId], references: [id])
+  members    Member[]
+  milestones Milestone[]
+  tasks      Task[]
+  resources  Resource[]
+}
+
+model Member {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  user        User      @relation(fields: [userId], references: [id])
+  workspaceId Int
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  tasks       Task[]
+  resources   Resource[]
+}
+
+model Milestone {
+  id          Int      @id @default(autoincrement())
+  title       String
+  dueDate     DateTime
+  workspaceId Int
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  tasks       Task[]
+}
+
+model Task {
+  id          Int        @id @default(autoincrement())
+  title       String
+  status      String     // "To Do", "In Progress", "Done"
+  dueDate     DateTime?
+  assigneeId  Int?
+  assignee    Member?    @relation(fields: [assigneeId], references: [id])
+  milestoneId Int?
+  milestone   Milestone? @relation(fields: [milestoneId], references: [id])
+  workspaceId Int
+  workspace   Workspace  @relation(fields: [workspaceId], references: [id])
+  priority    String?    // "Low", "Medium", "High"
+}
+
+model Resource {
+  id           Int      @id @default(autoincrement())
+  title        String
+  url          String
+  type         String   // "Link", "Document"
+  uploadedById Int
+  uploadedBy   Member   @relation(fields: [uploadedById], references: [id])
+  workspaceId  Int
+  workspace    Workspace @relation(fields: [workspaceId], references: [id])
+  createdAt    DateTime @default(now())
+}
