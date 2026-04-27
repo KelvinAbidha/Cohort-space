@@ -76,3 +76,5 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
+
+export const seed = main;
