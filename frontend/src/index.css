@@ -19,8 +19,27 @@
 
 @layer base {
   body {
-    @apply bg-slate-50 text-slate-900 antialiased selection:bg-primary-100 selection:text-primary-900;
+    @apply text-slate-900 antialiased selection:bg-primary-100 selection:text-primary-900 bg-transparent min-h-screen relative;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -100;
+    pointer-events: none;
+    background-color: #f8fafc;
+    background-image: 
+      radial-gradient(circle at 15% 50%, rgba(139, 92, 246, 0.18) 0%, transparent 50%),
+      radial-gradient(circle at 85% 30%, rgba(244, 63, 94, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 50% 80%, rgba(56, 189, 248, 0.18) 0%, transparent 50%),
+      radial-gradient(circle at 80% 90%, rgba(16, 185, 129, 0.12) 0%, transparent 50%);
+    background-size: 200% 200%;
+    animation: gradient-shift 20s ease-in-out infinite alternate;
   }
 }
 
@@ -98,4 +117,16 @@
 
 .animate-modal-in {
   animation: modal-scale-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 0%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+  100% {
+    background-position: 0% 100%;
+  }
 }

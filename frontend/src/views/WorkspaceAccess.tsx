@@ -37,9 +37,7 @@ const WorkspaceAccess: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-2 relative overflow-hidden">
-      <div className="absolute top-0 -left-64 w-[600px] h-[600px] bg-primary-100/50 rounded-full blur-3xl animate-pulse"></div>
-      <div className="absolute bottom-0 -right-64 w-[800px] h-[800px] bg-rose-50/50 rounded-full blur-3xl"></div>
+    <div className="min-h-screen bg-transparent flex items-center justify-center p-2 relative overflow-hidden">
  
       <div className="max-w-[400px] w-full z-10 animate-fade-in py-1">
         <div className="text-center mb-3">

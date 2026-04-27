@@ -54,7 +54,7 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const currentPathName = navItems.find(n => n.path === location.pathname)?.name || 'Home';
 
   return (
-    <div className="flex h-screen bg-slate-50 font-sans overflow-hidden">
+    <div className="flex h-screen bg-transparent font-sans overflow-hidden">
       {/* Sidebar - Solid and Professional */}
       <aside className="w-80 glass-sidebar flex flex-col z-20">
         <div className="p-10">
@@ -103,8 +103,6 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto relative custom-scrollbar flex flex-col">
-        {/* Decorative background element - Fixed position to avoid sliding */}
-        <div className="fixed top-0 right-0 w-[600px] h-[600px] bg-primary-100/20 rounded-full blur-[120px] -z-10 -mr-64 -mt-64"></div>
         
         <header className="h-28 bg-white/60 backdrop-blur-xl border-b border-slate-200/50 flex items-center justify-between px-12 sticky top-0 z-30">
           <div className="flex items-center space-x-4">

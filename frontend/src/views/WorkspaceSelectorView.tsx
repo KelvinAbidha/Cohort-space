@@ -129,16 +129,13 @@ const WorkspaceSelectorView: React.FC = () => {
   };
 
   if (loading) return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50">
+    <div className="min-h-screen flex items-center justify-center bg-transparent">
       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans flex flex-col relative overflow-hidden">
-      {/* Background Blobs */}
-      <div className="absolute top-0 -left-64 w-[600px] h-[600px] bg-primary-100/30 rounded-full blur-3xl pointer-events-none"></div>
-      <div className="absolute bottom-0 -right-64 w-[800px] h-[800px] bg-rose-50/40 rounded-full blur-3xl pointer-events-none"></div>
+    <div className="min-h-screen bg-transparent font-sans flex flex-col relative overflow-hidden">
 
       <div className="w-full max-w-[1600px] mx-auto px-10 pt-10 flex flex-col flex-1 z-10">
         {/* Header */}
