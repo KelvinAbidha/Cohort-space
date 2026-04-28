@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Monitor, Lock, ArrowRight, AlertCircle, Bookmark, User } from 'lucide-react';
+import ThemeToggle from '../components/ThemeToggle.tsx';
 
 const WorkspaceAccess: React.FC = () => {
   const [isRegistering, setIsRegistering] = useState(false);
@@ -38,6 +39,9 @@ const WorkspaceAccess: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-transparent flex items-center justify-center p-2 relative overflow-hidden">
+      <div className="absolute top-6 right-6 z-50">
+        <ThemeToggle />
+      </div>
  
       <div className="max-w-[400px] w-full z-10 animate-fade-in py-1">
         <div className="text-center mb-3">

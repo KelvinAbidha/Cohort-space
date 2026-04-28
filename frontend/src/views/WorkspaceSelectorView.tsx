@@ -16,6 +16,7 @@ import {
   ShieldCheck,
   Zap
 } from 'lucide-react';
+import ThemeToggle from '../components/ThemeToggle.tsx';
 
 interface GroupedWorkspaces {
     [unitName: string]: {
@@ -151,6 +152,7 @@ const WorkspaceSelectorView: React.FC = () => {
           </div>
           
           <div className="flex items-center space-x-4">
+            <ThemeToggle />
             <button 
               onClick={() => setIsCreateModalOpen(true)}
               className="flex items-center space-x-2 text-xs font-black text-emerald-600 uppercase tracking-widest hover:text-white hover:bg-emerald-600 transition-all bg-white px-6 py-3.5 rounded-2xl border border-emerald-100 shadow-sm hover:shadow-emerald-200"

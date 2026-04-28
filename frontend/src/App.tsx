@@ -17,6 +17,7 @@ import DashboardView from './views/DashboardView.tsx';
 import TaskBoardView from './views/TaskBoardView.tsx';
 import ResourceVaultView from './views/ResourceVaultView.tsx';
 import WorkspaceSelectorView from './views/WorkspaceSelectorView.tsx';
+import ThemeToggle from './components/ThemeToggle.tsx';
 
 const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
@@ -116,7 +117,8 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           </div>
           
           <div className="flex items-center space-x-6">
-            <div className="flex items-center space-x-4 bg-white/80 p-2.5 pr-6 rounded-2xl border border-white shadow-xl shadow-slate-200/40">
+            <ThemeToggle />
+            <div className="flex items-center space-x-4 bg-white/80 dark:bg-slate-800/80 p-2.5 pr-6 rounded-2xl border border-white dark:border-slate-700 shadow-xl shadow-slate-200/40 dark:shadow-slate-900/40">
                <div className="w-10 h-10 rounded-xl bg-primary-600 flex items-center justify-center text-xs font-black text-white shadow-lg shadow-primary-200">
                   {(userName?.[0] || '?').toUpperCase()}
                </div>
