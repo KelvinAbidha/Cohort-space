@@ -212,6 +212,7 @@ const ReportsView: React.FC = () => {
             </div>
           )}
         </div>
+        </div>
       </div>
 
       {/* Navigation Tabs */}
