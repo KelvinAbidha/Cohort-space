@@ -45,6 +45,8 @@ const ReportsView: React.FC = () => {
   const [dashData, setDashData] = useState<DashboardData | null>(null);
   const [contributions, setContributions] = useState<Contribution[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [startDate, setStartDate] = useState<string>('');
+  const [endDate, setEndDate] = useState<string>('');
   
   const workspaceId = localStorage.getItem('workspaceId');
 
@@ -66,10 +68,19 @@ const ReportsView: React.FC = () => {
     fetchReportData();
   }, [workspaceId]);
 
+  const filteredTasks = tasks.filter(t => {
+    if (!t.dueDate) return true;
+    const taskDate = new Date(t.dueDate).getTime();
+    // To properly include the whole end date, we add 24 hours minus 1 ms
+    const start = startDate ? new Date(startDate).getTime() : 0;
+    const end = endDate ? new Date(endDate).getTime() + 86399999 : Infinity;
+    return taskDate >= start && taskDate <= end;
+  });
+
   const exportToCSV = () => {
     // Generate CSV from tasks data
     const headers = ['Task Title', 'Status', 'Priority', 'Assignee', 'Due Date'];
-    const rows = tasks.map(t => [
+    const rows = filteredTasks.map(t => [
       `"${t.title.replace(/"/g, '""')}"`,
       t.status,
       t.priority,
@@ -104,18 +115,76 @@ const ReportsView: React.FC = () => {
   }
 
   // Helper for timeline
-  const sortedTasks = [...tasks]
+  const sortedTasks = [...filteredTasks]
     .filter(t => t.dueDate)
     .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
 
   return (
-    <div className="space-y-8 animate-fade-in pb-12">
+    <>
+    {/* Tabular Print View (Hidden on screen) */}
+    <div className="hidden print:block p-8 bg-white text-black min-h-screen">
+      <h1 className="text-2xl font-bold mb-2">Cohort Space - Timeline Report</h1>
+      <p className="mb-6 text-sm text-gray-500 font-medium">Timeline Filter: {startDate || 'All Time'} to {endDate || 'All Time'}</p>
+      <table className="w-full text-left border-collapse border border-gray-300 text-sm">
+        <thead>
+          <tr className="bg-gray-100">
+            <th className="border border-gray-300 p-3 font-bold">Task Title</th>
+            <th className="border border-gray-300 p-3 font-bold">Status</th>
+            <th className="border border-gray-300 p-3 font-bold">Priority</th>
+            <th className="border border-gray-300 p-3 font-bold">Assignee</th>
+            <th className="border border-gray-300 p-3 font-bold">Due Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredTasks.length > 0 ? filteredTasks.map(t => (
+            <tr key={t.id}>
+              <td className="border border-gray-300 p-3 font-medium">{t.title}</td>
+              <td className="border border-gray-300 p-3">{t.status}</td>
+              <td className="border border-gray-300 p-3">{t.priority}</td>
+              <td className="border border-gray-300 p-3">{t.assignee?.name || 'Unassigned'}</td>
+              <td className="border border-gray-300 p-3">{t.dueDate ? new Date(t.dueDate).toLocaleDateString() : 'None'}</td>
+            </tr>
+          )) : (
+             <tr>
+               <td colSpan={5} className="border border-gray-300 p-3 text-center text-gray-500">No tasks found for this timeline.</td>
+             </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
+
+    {/* Screen View (Hidden on print) */}
+    <div className="space-y-8 animate-fade-in pb-12 print:hidden">
       {/* Header and Export */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Analytics & Reports</h1>
           <p className="text-slate-500 font-medium mt-1">Comprehensive insights across individuals, groups, and timeline.</p>
         </div>
+        
+        <div className="flex flex-col sm:flex-row items-center gap-4">
+          {/* Date Filter */}
+          <div className="flex items-center space-x-2 bg-white/80 dark:bg-slate-800/80 p-2 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+            <div className="flex items-center">
+              <span className="text-[10px] font-black text-slate-400 ml-2 mr-1 uppercase tracking-widest">From</span>
+              <input 
+                type="date" 
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="bg-transparent border-none text-sm font-bold text-slate-700 dark:text-slate-200 focus:ring-0 cursor-pointer"
+              />
+            </div>
+            <div className="w-px h-4 bg-slate-300 dark:bg-slate-600"></div>
+            <div className="flex items-center">
+              <span className="text-[10px] font-black text-slate-400 ml-2 mr-1 uppercase tracking-widest">To</span>
+              <input 
+                type="date" 
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="bg-transparent border-none text-sm font-bold text-slate-700 dark:text-slate-200 focus:ring-0 cursor-pointer"
+              />
+            </div>
+          </div>
         
         <div className="relative">
           <button 
@@ -367,6 +436,7 @@ const ReportsView: React.FC = () => {
 
       </div>
     </div>
+    </>
   );
 };
 
