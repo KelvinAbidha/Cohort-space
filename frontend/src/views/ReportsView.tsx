@@ -66,8 +66,32 @@ const ReportsView: React.FC = () => {
     fetchReportData();
   }, [workspaceId]);
 
-  const handleExport = (format: string) => {
-    alert(`Exporting report as ${format}... (Simulation)`);
+  const exportToCSV = () => {
+    // Generate CSV from tasks data
+    const headers = ['Task Title', 'Status', 'Priority', 'Assignee', 'Due Date'];
+    const rows = tasks.map(t => [
+      `"${t.title.replace(/"/g, '""')}"`,
+      t.status,
+      t.priority,
+      t.assignee?.name || 'Unassigned',
+      t.dueDate ? new Date(t.dueDate).toLocaleDateString() : 'None'
+    ]);
+    
+    const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `cohort-report-${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    setShowExportMenu(false);
+  };
+
+  const exportToPDF = () => {
+    // Triggers native print dialog which natively supports "Save as PDF"
+    window.print();
     setShowExportMenu(false);
   };
 
@@ -106,14 +130,14 @@ const ReportsView: React.FC = () => {
           {showExportMenu && (
             <div className="absolute right-0 mt-2 w-56 glass-card rounded-2xl shadow-xl overflow-hidden z-50 border border-slate-100 dark:border-slate-700">
               <div className="p-2 space-y-1">
-                <button onClick={() => handleExport('PDF Document')} className="flex items-center w-full px-4 py-3 text-sm font-bold text-slate-700 dark:text-slate-200 hover:bg-primary-50 dark:hover:bg-primary-900/30 hover:text-primary-600 rounded-xl transition-colors">
-                  <FileText className="w-4 h-4 mr-3" /> PDF Document
+                <button onClick={exportToPDF} className="flex items-center w-full px-4 py-3 text-sm font-bold text-slate-700 dark:text-slate-200 hover:bg-primary-50 dark:hover:bg-primary-900/30 hover:text-primary-600 rounded-xl transition-colors">
+                  <FileText className="w-4 h-4 mr-3" /> Save as PDF
                 </button>
-                <button onClick={() => handleExport('Excel Spreadsheet')} className="flex items-center w-full px-4 py-3 text-sm font-bold text-slate-700 dark:text-slate-200 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 hover:text-emerald-600 rounded-xl transition-colors">
-                  <FileSpreadsheet className="w-4 h-4 mr-3" /> Excel Data
+                <button onClick={exportToCSV} className="flex items-center w-full px-4 py-3 text-sm font-bold text-slate-700 dark:text-slate-200 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 hover:text-emerald-600 rounded-xl transition-colors">
+                  <FileSpreadsheet className="w-4 h-4 mr-3" /> Export CSV Data
                 </button>
-                <button onClick={() => handleExport('Print Format')} className="flex items-center w-full px-4 py-3 text-sm font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
-                  <Printer className="w-4 h-4 mr-3" /> Print Format
+                <button onClick={exportToPDF} className="flex items-center w-full px-4 py-3 text-sm font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
+                  <Printer className="w-4 h-4 mr-3" /> Print Report
                 </button>
               </div>
             </div>
