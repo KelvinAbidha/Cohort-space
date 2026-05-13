@@ -78,22 +78,52 @@ const ReportsView: React.FC = () => {
   });
 
   const exportToCSV = () => {
-    // Generate CSV from tasks data
-    const headers = ['Task Title', 'Status', 'Priority', 'Assignee', 'Due Date'];
-    const rows = filteredTasks.map(t => [
-      `"${t.title.replace(/"/g, '""')}"`,
-      t.status,
-      t.priority,
-      t.assignee?.name || 'Unassigned',
-      t.dueDate ? new Date(t.dueDate).toLocaleDateString() : 'None'
-    ]);
-    
-    const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    let csvContent = "";
+    let filename = `cohort-report-${activeTab}-${new Date().toISOString().split('T')[0]}.csv`;
+
+    if (activeTab === 'timeline') {
+      const headers = ['Task Title', 'Status', 'Priority', 'Assignee', 'Due Date'];
+      const rows = filteredTasks.map(t => [
+        `"${t.title.replace(/"/g, '""')}"`,
+        t.status,
+        t.priority,
+        t.assignee?.name || 'Unassigned',
+        t.dueDate ? new Date(t.dueDate).toLocaleDateString() : 'None'
+      ]);
+      csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    } else if (activeTab === 'individual') {
+      const headers = ['Member Name', 'Completed Tasks', 'Total Assigned Tasks', 'Completion Rate'];
+      const rows = contributions.map(c => {
+        const percentage = c.total > 0 ? Math.round((c.completed / c.total) * 100) : 0;
+        return [`"${c.name}"`, c.completed, c.total, `${percentage}%`];
+      });
+      csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    } else if (activeTab === 'group') {
+      const headers = ['Metric', 'Value'];
+      const rows = [
+        ['Total Tasks', dashData?.totalTasks || 0],
+        ['Open Tasks', dashData?.openTasks || 0],
+        ['Completion Rate', `${dashData?.completionRate || 0}%`],
+        ['Milestones Due', dashData?.milestonesDue || 0],
+        ['Active Members', dashData?.activeMembers || 0]
+      ];
+      csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    } else if (activeTab === 'cohort') {
+      const headers = ['Comparison Metric', 'Group Value', 'Cohort Average'];
+      const rows = [
+        ['Completion Rate', `${dashData?.completionRate || 0}%`, '62%'],
+        ['Speed to Complete (days/task)', '2.4', '2.8'],
+        ['Active Participation', '92%', '80%'],
+        ['Milestones Hit', '100%', '85%']
+      ];
+      csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    }
+
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', `cohort-report-${new Date().toISOString().split('T')[0]}.csv`);
+    link.setAttribute('download', filename);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -123,34 +153,99 @@ const ReportsView: React.FC = () => {
     <>
     {/* Tabular Print View (Hidden on screen) */}
     <div className="hidden print:block p-8 bg-white text-black min-h-screen">
-      <h1 className="text-2xl font-bold mb-2">Cohort Space - Timeline Report</h1>
+      <h1 className="text-2xl font-bold mb-2">Cohort Space - {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Report</h1>
       <p className="mb-6 text-sm text-gray-500 font-medium">Timeline Filter: {startDate || 'All Time'} to {endDate || 'All Time'}</p>
-      <table className="w-full text-left border-collapse border border-gray-300 text-sm">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="border border-gray-300 p-3 font-bold">Task Title</th>
-            <th className="border border-gray-300 p-3 font-bold">Status</th>
-            <th className="border border-gray-300 p-3 font-bold">Priority</th>
-            <th className="border border-gray-300 p-3 font-bold">Assignee</th>
-            <th className="border border-gray-300 p-3 font-bold">Due Date</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredTasks.length > 0 ? filteredTasks.map(t => (
-            <tr key={t.id}>
-              <td className="border border-gray-300 p-3 font-medium">{t.title}</td>
-              <td className="border border-gray-300 p-3">{t.status}</td>
-              <td className="border border-gray-300 p-3">{t.priority}</td>
-              <td className="border border-gray-300 p-3">{t.assignee?.name || 'Unassigned'}</td>
-              <td className="border border-gray-300 p-3">{t.dueDate ? new Date(t.dueDate).toLocaleDateString() : 'None'}</td>
+      
+      {activeTab === 'timeline' && (
+        <table className="w-full text-left border-collapse border border-gray-300 text-sm">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="border border-gray-300 p-3 font-bold">Task Title</th>
+              <th className="border border-gray-300 p-3 font-bold">Status</th>
+              <th className="border border-gray-300 p-3 font-bold">Priority</th>
+              <th className="border border-gray-300 p-3 font-bold">Assignee</th>
+              <th className="border border-gray-300 p-3 font-bold">Due Date</th>
             </tr>
-          )) : (
-             <tr>
-               <td colSpan={5} className="border border-gray-300 p-3 text-center text-gray-500">No tasks found for this timeline.</td>
-             </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {filteredTasks.length > 0 ? filteredTasks.map(t => (
+              <tr key={t.id}>
+                <td className="border border-gray-300 p-3 font-medium">{t.title}</td>
+                <td className="border border-gray-300 p-3">{t.status}</td>
+                <td className="border border-gray-300 p-3">{t.priority}</td>
+                <td className="border border-gray-300 p-3">{t.assignee?.name || 'Unassigned'}</td>
+                <td className="border border-gray-300 p-3">{t.dueDate ? new Date(t.dueDate).toLocaleDateString() : 'None'}</td>
+              </tr>
+            )) : (
+               <tr>
+                 <td colSpan={5} className="border border-gray-300 p-3 text-center text-gray-500">No tasks found for this timeline.</td>
+               </tr>
+            )}
+          </tbody>
+        </table>
+      )}
+
+      {activeTab === 'individual' && (
+        <table className="w-full text-left border-collapse border border-gray-300 text-sm">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="border border-gray-300 p-3 font-bold">Member Name</th>
+              <th className="border border-gray-300 p-3 font-bold">Completed Tasks</th>
+              <th className="border border-gray-300 p-3 font-bold">Total Assigned</th>
+              <th className="border border-gray-300 p-3 font-bold">Completion Rate</th>
+            </tr>
+          </thead>
+          <tbody>
+            {contributions.map((c, idx) => {
+              const percentage = c.total > 0 ? Math.round((c.completed / c.total) * 100) : 0;
+              return (
+                <tr key={idx}>
+                  <td className="border border-gray-300 p-3 font-medium">{c.name}</td>
+                  <td className="border border-gray-300 p-3">{c.completed}</td>
+                  <td className="border border-gray-300 p-3">{c.total}</td>
+                  <td className="border border-gray-300 p-3">{percentage}%</td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      )}
+
+      {activeTab === 'group' && (
+         <table className="w-full max-w-md text-left border-collapse border border-gray-300 text-sm">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="border border-gray-300 p-3 font-bold">Metric</th>
+              <th className="border border-gray-300 p-3 font-bold">Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td className="border border-gray-300 p-3">Total Tasks</td><td className="border border-gray-300 p-3">{dashData.totalTasks}</td></tr>
+            <tr><td className="border border-gray-300 p-3">Open Tasks</td><td className="border border-gray-300 p-3">{dashData.openTasks}</td></tr>
+            <tr><td className="border border-gray-300 p-3">Completion Rate</td><td className="border border-gray-300 p-3">{dashData.completionRate}%</td></tr>
+            <tr><td className="border border-gray-300 p-3">Milestones Due</td><td className="border border-gray-300 p-3">{dashData.milestonesDue}</td></tr>
+            <tr><td className="border border-gray-300 p-3">Active Members</td><td className="border border-gray-300 p-3">{dashData.activeMembers}</td></tr>
+          </tbody>
+        </table>
+      )}
+
+      {activeTab === 'cohort' && (
+         <table className="w-full text-left border-collapse border border-gray-300 text-sm">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="border border-gray-300 p-3 font-bold">Comparison Metric</th>
+              <th className="border border-gray-300 p-3 font-bold">Group Value</th>
+              <th className="border border-gray-300 p-3 font-bold">Cohort Average</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td className="border border-gray-300 p-3">Completion Rate</td><td className="border border-gray-300 p-3">{dashData.completionRate}%</td><td className="border border-gray-300 p-3">62%</td></tr>
+            <tr><td className="border border-gray-300 p-3">Speed to Complete (days/task)</td><td className="border border-gray-300 p-3">2.4</td><td className="border border-gray-300 p-3">2.8</td></tr>
+            <tr><td className="border border-gray-300 p-3">Active Participation</td><td className="border border-gray-300 p-3">92%</td><td className="border border-gray-300 p-3">80%</td></tr>
+            <tr><td className="border border-gray-300 p-3">Milestones Hit</td><td className="border border-gray-300 p-3">100%</td><td className="border border-gray-300 p-3">85%</td></tr>
+          </tbody>
+        </table>
+      )}
     </div>
 
     {/* Screen View (Hidden on print) */}
