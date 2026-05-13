@@ -7,7 +7,8 @@ import {
   ChevronRight,
   Monitor,
   LayoutGrid,
-  Trash2
+  Trash2,
+  PieChart
 } from 'lucide-react';
 import axios from 'axios';
 
@@ -18,6 +19,7 @@ import TaskBoardView from './views/TaskBoardView.tsx';
 import ResourceVaultView from './views/ResourceVaultView.tsx';
 import WorkspaceSelectorView from './views/WorkspaceSelectorView.tsx';
 import ThemeToggle from './components/ThemeToggle.tsx';
+import ReportsView from './views/ReportsView.tsx';
 
 const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
@@ -49,6 +51,7 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
     { name: 'Task Board', path: '/tasks', icon: Columns3 },
     { name: 'Resource Vault', path: '/resources', icon: Database },
+    { name: 'Analytics & Reports', path: '/reports', icon: PieChart },
     { name: 'My Groups', path: '/selector', icon: LayoutGrid },
   ];
 
@@ -160,6 +163,7 @@ function App() {
         <Route path="/dashboard" element={<ProtectedRoute><DynamicLayout><DashboardView /></DynamicLayout></ProtectedRoute>} />
         <Route path="/tasks" element={<ProtectedRoute><DynamicLayout><TaskBoardView /></DynamicLayout></ProtectedRoute>} />
         <Route path="/resources" element={<ProtectedRoute><DynamicLayout><ResourceVaultView /></DynamicLayout></ProtectedRoute>} />
+        <Route path="/reports" element={<ProtectedRoute><DynamicLayout><ReportsView /></DynamicLayout></ProtectedRoute>} />
         <Route path="*" element={<Navigate to="/selector" />} />
       </Routes>
     </Router>
