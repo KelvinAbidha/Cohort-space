@@ -116,8 +116,34 @@ const ReportsView: React.FC = () => {
     }));
   };
 
+  const getVelocityData = () => {
+    const velocity: number[] = [];
+    const now = new Date();
+    
+    // Calculate for the last 7 weeks
+    for (let i = 6; i >= 0; i--) {
+      const weekEnd = new Date(now.getTime() - i * 7 * 24 * 60 * 60 * 1000);
+      const weekStart = new Date(weekEnd.getTime() - 7 * 24 * 60 * 60 * 1000);
+      
+      const completedThisWeek = tasks.filter(t => {
+        if (t.status !== 'Done' || !t.dueDate) return false;
+        const d = new Date(t.dueDate);
+        return d >= weekStart && d < weekEnd;
+      }).length;
+      
+      velocity.push(completedThisWeek);
+    }
+    
+    const maxVal = Math.max(...velocity, 5); // Scale against at least 5 for visibility
+    return velocity.map(v => ({
+      count: v,
+      height: (v / maxVal) * 100
+    }));
+  };
+
   const currentStats = getFilteredStats();
   const currentContributions = getFilteredContributions();
+  const velocityData = getVelocityData();
 
 
 
@@ -433,14 +459,16 @@ const ReportsView: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="glass-card p-8 rounded-3xl col-span-2">
                 <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6">Group Velocity</h3>
-                <div className="flex items-end space-x-4 h-64">
-                  {/* Mocking a bar chart using tailwind */}
-                  {[40, 60, 30, 80, 50, 90, 70].map((height, i) => (
+                <div className="flex items-stretch space-x-4 h-64">
+                  {velocityData.map((data, i) => (
                     <div key={i} className="flex-1 flex flex-col justify-end group">
-                      <div className="w-full bg-primary-100 dark:bg-primary-900/30 rounded-t-xl relative overflow-hidden transition-all duration-500 group-hover:bg-primary-200 dark:group-hover:bg-primary-800/50" style={{ height: `${height}%` }}>
-                        <div className="absolute bottom-0 w-full bg-primary-500 dark:bg-primary-500 transition-all duration-500 group-hover:bg-primary-400" style={{ height: `${height * 0.8}%` }}></div>
+                      <div className="w-full bg-slate-100/50 dark:bg-slate-800/50 rounded-t-2xl relative overflow-hidden transition-all duration-500 group-hover:bg-slate-200/50 dark:group-hover:bg-slate-700/50" style={{ height: `${data.height}%` }}>
+                        <div className="absolute bottom-0 w-full bg-gradient-to-t from-primary-600 to-primary-400 rounded-t-2xl transition-all duration-500 group-hover:brightness-110" style={{ height: `100%` }}></div>
                       </div>
-                      <span className="text-center text-xs font-bold text-slate-400 mt-2">Week {i+1}</span>
+                      <div className="text-center mt-2">
+                        <span className="block text-[10px] font-black text-slate-400 uppercase tracking-tighter">Wk {i+1}</span>
+                        <span className="block text-[10px] font-bold text-primary-600">{data.count}</span>
+                      </div>
                     </div>
                   ))}
                 </div>

@@ -186,7 +186,7 @@ app.get('/api/dashboard', async (req, res) => {
       milestonesDue: deadlines.length,
       completionRate,
       activeMembers: membersCount,
-      upcomingDeadlines: deadlines.slice(0, 5)
+      upcomingDeadlines: deadlines
     });
   } catch (error) {
     res.status(500).json({ error: 'Internal Server Error' });

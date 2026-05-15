@@ -27,6 +27,7 @@ interface Contribution {
 const DashboardView: React.FC = () => {
   const [data, setData] = useState<DashboardData | null>(null);
   const [contributions, setContributions] = useState<Contribution[]>([]);
+  const [showAllDeadlines, setShowAllDeadlines] = useState(false);
   const workspaceId = localStorage.getItem('workspaceId');
 
   useEffect(() => {
@@ -53,6 +54,10 @@ const DashboardView: React.FC = () => {
     { label: 'Completion Rate', value: `${data.completionRate}%`, icon: TrendingUp, color: 'text-emerald-600', bg: 'bg-emerald-50' },
     { label: 'Active Members', value: data.activeMembers, icon: Users, color: 'text-primary-600', bg: 'bg-primary-50' },
   ];
+
+  const displayedDeadlines = showAllDeadlines 
+    ? data.upcomingDeadlines 
+    : data.upcomingDeadlines.slice(0, 5);
 
   return (
     <div className="space-y-12 animate-fade-in">
@@ -133,11 +138,11 @@ const DashboardView: React.FC = () => {
           </div>
           
           <div className="space-y-6 flex-1">
-            {data.upcomingDeadlines.length > 0 ? (
-              data.upcomingDeadlines.map((m, idx) => (
+            {displayedDeadlines.length > 0 ? (
+              displayedDeadlines.map((m, idx) => (
                 <div key={idx} className="group relative pl-8 pb-8 last:pb-0">
                    {/* Vertical line connector */}
-                  {idx < data.upcomingDeadlines.length - 1 && (
+                  {idx < displayedDeadlines.length - 1 && (
                     <div className="absolute left-[11px] top-6 bottom-0 w-[2px] bg-slate-100"></div>
                   )}
                   {/* Dot */}
@@ -172,10 +177,15 @@ const DashboardView: React.FC = () => {
             )}
           </div>
 
-          <button className="w-full mt-10 py-4 text-xs font-black text-primary-600 bg-primary-50/50 rounded-2xl hover:bg-primary-50 transition-all duration-300 uppercase tracking-[0.2em] flex items-center justify-center">
-            Full Schedule
-            <ChevronRight className="w-4 h-4 ml-2" />
-          </button>
+          {data.upcomingDeadlines.length > 5 && (
+            <button 
+              onClick={() => setShowAllDeadlines(!showAllDeadlines)}
+              className="w-full mt-10 py-4 text-xs font-black text-primary-600 bg-primary-50/50 rounded-2xl hover:bg-primary-50 transition-all duration-300 uppercase tracking-[0.2em] flex items-center justify-center"
+            >
+              {showAllDeadlines ? 'Show Less' : 'Full Schedule'}
+              <ChevronRight className={`w-4 h-4 ml-2 transition-transform duration-300 ${showAllDeadlines ? 'rotate-90' : ''}`} />
+            </button>
+          )}
         </div>
       </div>
     </div>
