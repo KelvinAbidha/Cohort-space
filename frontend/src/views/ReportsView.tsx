@@ -1,18 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import * as XLSX from 'xlsx';
 import { 
-  Download, 
-  FileText, 
-  FileSpreadsheet, 
-  Printer, 
+  Download,
+  FileText,
+  FileSpreadsheet,
   Users, 
   User, 
   BarChart2, 
-  Calendar,
   ChevronDown,
-  Activity,
-  Layers,
-  Clock
+  Layers
 } from 'lucide-react';
 
 interface Task {
@@ -39,7 +36,7 @@ interface DashboardData {
 }
 
 const ReportsView: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'group' | 'individual' | 'timeline' | 'cohort'>('group');
+  const [activeTab, setActiveTab] = useState<'group' | 'individual' | 'cohort'>('group');
   const [showExportMenu, setShowExportMenu] = useState(false);
   
   const [dashData, setDashData] = useState<DashboardData | null>(null);
@@ -47,6 +44,7 @@ const ReportsView: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [startDate, setStartDate] = useState<string>('');
   const [endDate, setEndDate] = useState<string>('');
+  const [printTarget, setPrintTarget] = useState<string>('all');
   
   const workspaceId = localStorage.getItem('workspaceId');
 
@@ -68,75 +66,143 @@ const ReportsView: React.FC = () => {
     fetchReportData();
   }, [workspaceId]);
 
+  // Derived filtered data based on selected duration
   const filteredTasks = tasks.filter(t => {
     if (!t.dueDate) return true;
     const taskDate = new Date(t.dueDate).getTime();
-    // To properly include the whole end date, we add 24 hours minus 1 ms
     const start = startDate ? new Date(startDate).getTime() : 0;
     const end = endDate ? new Date(endDate).getTime() + 86399999 : Infinity;
     return taskDate >= start && taskDate <= end;
   });
 
-  const exportToCSV = () => {
-    let csvContent = "";
-    let filename = `cohort-report-${activeTab}-${new Date().toISOString().split('T')[0]}.csv`;
+  const getFilteredStats = () => {
+    if (!dashData) return null;
+    if (!startDate && !endDate) return dashData;
 
-    if (activeTab === 'timeline') {
-      const headers = ['Task Title', 'Status', 'Priority', 'Assignee', 'Due Date'];
-      const rows = filteredTasks.map(t => [
-        `"${t.title.replace(/"/g, '""')}"`,
-        t.status,
-        t.priority,
-        t.assignee?.name || 'Unassigned',
-        t.dueDate ? new Date(t.dueDate).toLocaleDateString() : 'None'
-      ]);
-      csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
-    } else if (activeTab === 'individual') {
-      const headers = ['Member Name', 'Completed Tasks', 'Total Assigned Tasks', 'Completion Rate'];
-      const rows = contributions.map(c => {
-        const percentage = c.total > 0 ? Math.round((c.completed / c.total) * 100) : 0;
-        return [`"${c.name}"`, c.completed, c.total, `${percentage}%`];
-      });
-      csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const total = filteredTasks.length;
+    const completed = filteredTasks.filter(t => t.status === 'Done').length;
+    const rate = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+    return {
+      ...dashData,
+      totalTasks: total,
+      openTasks: total - completed,
+      completionRate: rate
+    };
+  };
+
+  const getFilteredContributions = (): Contribution[] => {
+    if (!startDate && !endDate) return contributions;
+
+    const memberMap: Record<string, { completed: number; total: number }> = {};
+    
+    // Initialize with all members from the original contributions to ensure we show everyone
+    contributions.forEach(c => {
+      memberMap[c.name] = { completed: 0, total: 0 };
+    });
+
+    filteredTasks.forEach(t => {
+      if (t.assignee?.name) {
+        if (!memberMap[t.assignee.name]) {
+          memberMap[t.assignee.name] = { completed: 0, total: 0 };
+        }
+        memberMap[t.assignee.name].total++;
+        if (t.status === 'Done') {
+          memberMap[t.assignee.name].completed++;
+        }
+      }
+    });
+
+    return Object.entries(memberMap).map(([name, stats]) => ({
+      name,
+      ...stats
+    }));
+  };
+
+  const currentStats = getFilteredStats();
+  const currentContributions = getFilteredContributions();
+
+
+
+  const exportToExcel = (subType?: string) => {
+    let data: any[] = [];
+    let filename = `cohort-report-${activeTab}-${new Date().toISOString().split('T')[0]}.xlsx`;
+
+    if (activeTab === 'individual') {
+      const targetContributions = subType ? currentContributions.filter(c => c.name === subType) : currentContributions;
+      data = targetContributions.map(c => ({
+        'Member Name': c.name,
+        'Completed Tasks': c.completed,
+        'Total Assigned Tasks': c.total,
+        'Completion Rate': `${c.total > 0 ? Math.round((c.completed / c.total) * 100) : 0}%`
+      }));
+      if (subType) filename = `cohort-report-${subType.replace(/\s+/g, '-').toLowerCase()}-${new Date().toISOString().split('T')[0]}.xlsx`;
     } else if (activeTab === 'group') {
-      const headers = ['Metric', 'Value'];
-      const rows = [
-        ['Total Tasks', dashData?.totalTasks || 0],
-        ['Open Tasks', dashData?.openTasks || 0],
-        ['Completion Rate', `${dashData?.completionRate || 0}%`],
-        ['Milestones Due', dashData?.milestonesDue || 0],
-        ['Active Members', dashData?.activeMembers || 0]
+      data = [
+        { 'Metric Variable': 'Total Project Tasks', 'Value': currentStats?.totalTasks || 0 },
+        { 'Metric Variable': 'Open/Remaining Tasks', 'Value': currentStats?.openTasks || 0 },
+        { 'Metric Variable': 'Overall Completion Rate', 'Value': `${currentStats?.completionRate || 0}%` },
+        { 'Metric Variable': 'Active Milestones Due', 'Value': currentStats?.milestonesDue || 0 },
+        { 'Metric Variable': 'Active Team Members', 'Value': currentStats?.activeMembers || 0 }
       ];
-      csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
     } else if (activeTab === 'cohort') {
-      const headers = ['Comparison Metric', 'Group Value', 'Cohort Average'];
-      const rows = [
-        ['Completion Rate', `${dashData?.completionRate || 0}%`, '62%'],
-        ['Speed to Complete (days/task)', '2.4', '2.8'],
-        ['Active Participation', '92%', '80%'],
-        ['Milestones Hit', '100%', '85%']
-      ];
-      csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+      if (subType === 'entire') {
+        data = [
+          { 'Benchmark Variable': 'Completion Rate', 'Cohort Average': '62%' },
+          { 'Benchmark Variable': 'Speed to Complete (days/task)', 'Cohort Average': '2.8' },
+          { 'Benchmark Variable': 'Active Participation', 'Cohort Average': '80%' },
+          { 'Benchmark Variable': 'Milestones Hit', 'Cohort Average': '85%' }
+        ];
+        filename = `cohort-entire-report-${new Date().toISOString().split('T')[0]}.xlsx`;
+      } else if (subType === 'group') {
+        data = [
+          { 'Benchmark Variable': 'Completion Rate', 'Group Value': `${currentStats?.completionRate || 0}%` },
+          { 'Benchmark Variable': 'Speed to Complete (days/task)', 'Group Value': '2.4' },
+          { 'Benchmark Variable': 'Active Participation', 'Group Value': '92%' },
+          { 'Benchmark Variable': 'Milestones Hit', 'Group Value': '100%' }
+        ];
+        filename = `cohort-group-only-report-${new Date().toISOString().split('T')[0]}.xlsx`;
+      } else {
+        data = [
+          { 'Benchmark Variable': 'Completion Rate', 'Group Value': `${currentStats?.completionRate || 0}%`, 'Cohort Average': '62%' },
+          { 'Benchmark Variable': 'Speed to Complete (days/task)', 'Group Value': '2.4', 'Cohort Average': '2.8' },
+          { 'Benchmark Variable': 'Active Participation', 'Group Value': '92%', 'Cohort Average': '80%' },
+          { 'Benchmark Variable': 'Milestones Hit', 'Group Value': '100%', 'Cohort Average': '85%' }
+        ];
+        filename = `cohort-comparison-report-${new Date().toISOString().split('T')[0]}.xlsx`;
+      }
     }
 
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', filename);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    const ws = XLSX.utils.json_to_sheet(data);
+    
+    // Auto-fit columns logic
+    const maxWidths = data.reduce((acc: any, row: any) => {
+      Object.keys(row).forEach((key, i) => {
+        const val = row[key] ? row[key].toString() : "";
+        const length = Math.max(key.length, val.length);
+        acc[i] = Math.max(acc[i] || 0, length);
+      });
+      return acc;
+    }, []);
+    ws['!cols'] = maxWidths.map((w: number) => ({ w: w + 2 }));
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Report");
+    XLSX.writeFile(wb, filename);
     setShowExportMenu(false);
   };
 
-  const exportToPDF = () => {
-    // Triggers native print dialog which natively supports "Save as PDF"
-    window.print();
+  const exportToPDF = (target: string = 'all') => {
+    setPrintTarget(target);
     setShowExportMenu(false);
+    setTimeout(() => {
+      window.print();
+    }, 150);
   };
 
-  if (!dashData) {
+
+
+  if (!currentStats) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
@@ -144,66 +210,38 @@ const ReportsView: React.FC = () => {
     );
   }
 
-  // Helper for timeline
-  const sortedTasks = [...filteredTasks]
-    .filter(t => t.dueDate)
-    .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
+
 
   return (
     <>
-    {/* Tabular Print View (Hidden on screen) */}
-    <div className="hidden print:block p-8 bg-white text-black min-h-screen">
-      <h1 className="text-2xl font-bold mb-2">Cohort Space - {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Report</h1>
-      <p className="mb-6 text-sm text-gray-500 font-medium">Timeline Filter: {startDate || 'All Time'} to {endDate || 'All Time'}</p>
-      
-      {activeTab === 'timeline' && (
-        <table className="w-full text-left border-collapse border border-gray-300 text-sm">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="border border-gray-300 p-3 font-bold">Task Title</th>
-              <th className="border border-gray-300 p-3 font-bold">Status</th>
-              <th className="border border-gray-300 p-3 font-bold">Priority</th>
-              <th className="border border-gray-300 p-3 font-bold">Assignee</th>
-              <th className="border border-gray-300 p-3 font-bold">Due Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredTasks.length > 0 ? filteredTasks.map(t => (
-              <tr key={t.id}>
-                <td className="border border-gray-300 p-3 font-medium">{t.title}</td>
-                <td className="border border-gray-300 p-3">{t.status}</td>
-                <td className="border border-gray-300 p-3">{t.priority}</td>
-                <td className="border border-gray-300 p-3">{t.assignee?.name || 'Unassigned'}</td>
-                <td className="border border-gray-300 p-3">{t.dueDate ? new Date(t.dueDate).toLocaleDateString() : 'None'}</td>
-              </tr>
-            )) : (
-               <tr>
-                 <td colSpan={5} className="border border-gray-300 p-3 text-center text-gray-500">No tasks found for this timeline.</td>
-               </tr>
-            )}
-          </tbody>
-        </table>
-      )}
+    {/* Simple Tabular Print View */}
+    <div className="hidden print:block p-8 bg-white text-slate-800 min-h-screen font-sans">
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-slate-900 mb-1">Cohort Space - {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Report</h1>
+        <p className="text-sm text-slate-500 font-medium">Reporting Duration: {startDate || 'All Time'} to {endDate || 'All Time'}</p>
+      </div>
 
       {activeTab === 'individual' && (
-        <table className="w-full text-left border-collapse border border-gray-300 text-sm">
+        <table className="w-full text-left border-collapse border border-slate-200">
           <thead>
-            <tr className="bg-gray-100">
-              <th className="border border-gray-300 p-3 font-bold">Member Name</th>
-              <th className="border border-gray-300 p-3 font-bold">Completed Tasks</th>
-              <th className="border border-gray-300 p-3 font-bold">Total Assigned</th>
-              <th className="border border-gray-300 p-3 font-bold">Completion Rate</th>
+            <tr className="bg-indigo-600 text-white">
+              <th className="p-3 border border-indigo-700 font-bold whitespace-nowrap">Member Name</th>
+              <th className="p-3 border border-indigo-700 font-bold text-center whitespace-nowrap">Completed Tasks</th>
+              <th className="p-3 border border-indigo-700 font-bold text-center whitespace-nowrap">Total Assigned</th>
+              <th className="p-3 border border-indigo-700 font-bold text-center whitespace-nowrap">Completion Rate</th>
             </tr>
           </thead>
           <tbody>
-            {contributions.map((c, idx) => {
+            {currentContributions
+              .filter(c => printTarget === 'all' || c.name === printTarget)
+              .map((c, idx) => {
               const percentage = c.total > 0 ? Math.round((c.completed / c.total) * 100) : 0;
               return (
-                <tr key={idx}>
-                  <td className="border border-gray-300 p-3 font-medium">{c.name}</td>
-                  <td className="border border-gray-300 p-3">{c.completed}</td>
-                  <td className="border border-gray-300 p-3">{c.total}</td>
-                  <td className="border border-gray-300 p-3">{percentage}%</td>
+                <tr key={idx} className={idx % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
+                  <td className="p-3 border border-slate-200 font-medium whitespace-nowrap">{c.name}</td>
+                  <td className="p-3 border border-slate-200 text-center">{c.completed}</td>
+                  <td className="p-3 border border-slate-200 text-center">{c.total}</td>
+                  <td className="p-3 border border-slate-200 text-center font-bold text-indigo-600">{percentage}%</td>
                 </tr>
               )
             })}
@@ -212,40 +250,44 @@ const ReportsView: React.FC = () => {
       )}
 
       {activeTab === 'group' && (
-         <table className="w-full max-w-md text-left border-collapse border border-gray-300 text-sm">
+         <table className="w-fit min-w-[400px] text-left border-collapse border border-slate-200">
           <thead>
-            <tr className="bg-gray-100">
-              <th className="border border-gray-300 p-3 font-bold">Metric</th>
-              <th className="border border-gray-300 p-3 font-bold">Value</th>
+            <tr className="bg-primary-600 text-white">
+              <th className="p-3 border border-primary-700 font-bold whitespace-nowrap">Metric Name</th>
+              <th className="p-3 border border-primary-700 font-bold text-right whitespace-nowrap">Current Value</th>
             </tr>
           </thead>
           <tbody>
-            <tr><td className="border border-gray-300 p-3">Total Tasks</td><td className="border border-gray-300 p-3">{dashData.totalTasks}</td></tr>
-            <tr><td className="border border-gray-300 p-3">Open Tasks</td><td className="border border-gray-300 p-3">{dashData.openTasks}</td></tr>
-            <tr><td className="border border-gray-300 p-3">Completion Rate</td><td className="border border-gray-300 p-3">{dashData.completionRate}%</td></tr>
-            <tr><td className="border border-gray-300 p-3">Milestones Due</td><td className="border border-gray-300 p-3">{dashData.milestonesDue}</td></tr>
-            <tr><td className="border border-gray-300 p-3">Active Members</td><td className="border border-gray-300 p-3">{dashData.activeMembers}</td></tr>
+            <tr className="bg-white"><td className="p-3 border border-slate-200 font-medium">Total Project Tasks</td><td className="p-3 border border-slate-200 text-right">{currentStats.totalTasks}</td></tr>
+            <tr className="bg-slate-50"><td className="p-3 border border-slate-200 font-medium">Open/Remaining Tasks</td><td className="p-3 border border-slate-200 text-right">{currentStats.openTasks}</td></tr>
+            <tr className="bg-white"><td className="p-3 border border-slate-200 font-medium">Overall Completion Rate</td><td className="p-3 border border-slate-200 text-right font-bold text-primary-600">{currentStats.completionRate}%</td></tr>
+            <tr className="bg-slate-50"><td className="p-3 border border-slate-200 font-medium">Active Milestones Due</td><td className="p-3 border border-slate-200 text-right">{currentStats.milestonesDue}</td></tr>
+            <tr className="bg-white"><td className="p-3 border border-slate-200 font-medium">Active Team Members</td><td className="p-3 border border-slate-200 text-right">{currentStats.activeMembers}</td></tr>
           </tbody>
         </table>
       )}
 
       {activeTab === 'cohort' && (
-         <table className="w-full text-left border-collapse border border-gray-300 text-sm">
+         <table className="w-full text-left border-collapse border border-slate-200">
           <thead>
-            <tr className="bg-gray-100">
-              <th className="border border-gray-300 p-3 font-bold">Comparison Metric</th>
-              <th className="border border-gray-300 p-3 font-bold">Group Value</th>
-              <th className="border border-gray-300 p-3 font-bold">Cohort Average</th>
+            <tr className="bg-purple-600 text-white">
+              <th className="p-3 border border-purple-700 font-bold whitespace-nowrap">Comparison Benchmark</th>
+              <th className="p-3 border border-purple-700 font-bold text-center whitespace-nowrap">Your Group Value</th>
+              <th className="p-3 border border-purple-700 font-bold text-center whitespace-nowrap">Cohort Average</th>
             </tr>
           </thead>
           <tbody>
-            <tr><td className="border border-gray-300 p-3">Completion Rate</td><td className="border border-gray-300 p-3">{dashData.completionRate}%</td><td className="border border-gray-300 p-3">62%</td></tr>
-            <tr><td className="border border-gray-300 p-3">Speed to Complete (days/task)</td><td className="border border-gray-300 p-3">2.4</td><td className="border border-gray-300 p-3">2.8</td></tr>
-            <tr><td className="border border-gray-300 p-3">Active Participation</td><td className="border border-gray-300 p-3">92%</td><td className="border border-gray-300 p-3">80%</td></tr>
-            <tr><td className="border border-gray-300 p-3">Milestones Hit</td><td className="border border-gray-300 p-3">100%</td><td className="border border-gray-300 p-3">85%</td></tr>
+            <tr className="bg-white"><td className="p-3 border border-slate-200 font-medium">Completion Rate</td><td className="p-3 border border-slate-200 text-center font-bold text-purple-600">{currentStats.completionRate}%</td><td className="p-3 border border-slate-200 text-center text-slate-500 font-bold">62%</td></tr>
+            <tr className="bg-slate-50"><td className="p-3 border border-slate-200 font-medium">Speed to Complete (days/task)</td><td className="p-3 border border-slate-200 text-center font-bold text-purple-600">2.4</td><td className="p-3 border border-slate-200 text-center text-slate-500 font-bold">2.8</td></tr>
+            <tr className="bg-white"><td className="p-3 border border-slate-200 font-medium">Active Participation</td><td className="p-3 border border-slate-200 text-center font-bold text-purple-600">92%</td><td className="p-3 border border-slate-200 text-center text-slate-500 font-bold">80%</td></tr>
+            <tr className="bg-slate-50"><td className="p-3 border border-slate-200 font-medium">Milestones Hit</td><td className="p-3 border border-slate-200 text-center font-bold text-purple-600">100%</td><td className="p-3 border border-slate-200 text-center text-slate-500 font-bold">85%</td></tr>
           </tbody>
         </table>
       )}
+      
+      <div className="mt-12 text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+        Generated by Cohort Space Intelligence Engine — {new Date().toLocaleString()}
+      </div>
     </div>
 
     {/* Screen View (Hidden on print) */}
@@ -254,7 +296,7 @@ const ReportsView: React.FC = () => {
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Analytics & Reports</h1>
-          <p className="text-slate-500 font-medium mt-1">Comprehensive insights across individuals, groups, and timeline.</p>
+          <p className="text-slate-500 font-medium mt-1">Comprehensive insights across individuals and groups.</p>
         </div>
         
         <div className="flex flex-col sm:flex-row items-center gap-4">
@@ -281,32 +323,85 @@ const ReportsView: React.FC = () => {
             </div>
           </div>
         
-        <div className="relative">
-          <button 
-            onClick={() => setShowExportMenu(!showExportMenu)}
-            className="flex items-center space-x-2 bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-2xl font-bold transition-all shadow-lg shadow-primary-200 dark:shadow-none"
-          >
-            <Download className="w-5 h-5" />
-            <span>Export Report</span>
-            <ChevronDown className="w-4 h-4 ml-2" />
-          </button>
-          
-          {showExportMenu && (
-            <div className="absolute right-0 mt-2 w-56 glass-card rounded-2xl shadow-xl overflow-hidden z-50 border border-slate-100 dark:border-slate-700">
-              <div className="p-2 space-y-1">
-                <button onClick={exportToPDF} className="flex items-center w-full px-4 py-3 text-sm font-bold text-slate-700 dark:text-slate-200 hover:bg-primary-50 dark:hover:bg-primary-900/30 hover:text-primary-600 rounded-xl transition-colors">
-                  <FileText className="w-4 h-4 mr-3" /> Save as PDF
-                </button>
-                <button onClick={exportToCSV} className="flex items-center w-full px-4 py-3 text-sm font-bold text-slate-700 dark:text-slate-200 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 hover:text-emerald-600 rounded-xl transition-colors">
-                  <FileSpreadsheet className="w-4 h-4 mr-3" /> Export CSV Data
-                </button>
-                <button onClick={exportToPDF} className="flex items-center w-full px-4 py-3 text-sm font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
-                  <Printer className="w-4 h-4 mr-3" /> Print Report
-                </button>
+        {activeTab !== 'group' && (
+          <div className="relative">
+            <button 
+              onClick={() => setShowExportMenu(!showExportMenu)}
+              className="flex items-center space-x-2 bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-2xl font-bold transition-all shadow-lg shadow-primary-200 dark:shadow-none"
+            >
+              <Download className="w-5 h-5" />
+              <span>Export Report</span>
+              <ChevronDown className="w-4 h-4 ml-2" />
+            </button>
+            
+            {showExportMenu && (
+              <div className="absolute right-0 mt-2 w-72 glass-card rounded-2xl shadow-xl overflow-hidden z-50 border border-slate-100 dark:border-slate-700 max-h-[500px] overflow-y-auto">
+                <div className="p-2 space-y-1">
+                  
+                  <div className="px-4 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-700 mb-1">Global Actions</div>
+                  <button onClick={() => exportToPDF('all')} className="flex items-center w-full px-4 py-3 text-sm font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
+                    <FileText className="w-4 h-4 mr-3" /> Save current view as PDF
+                  </button>
+                  <button onClick={() => exportToExcel()} className="flex items-center w-full px-4 py-3 text-sm font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors border-b border-slate-100 dark:border-slate-700 mb-2">
+                    <FileSpreadsheet className="w-4 h-4 mr-3" /> Export view to Excel
+                  </button>
+
+                  {activeTab === 'individual' && (
+                    <>
+                      <div className="px-4 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-700 mb-1">Individual Reports</div>
+                      {currentContributions.map((c, idx) => (
+                        <div key={idx} className="px-1 py-1 group">
+                          <div className="px-3 py-1 text-[11px] font-bold text-slate-500 truncate">{c.name}</div>
+                          <div className="flex gap-1">
+                            <button onClick={() => exportToPDF(c.name)} title="Download PDF" className="flex-1 flex items-center justify-center p-2 text-xs font-bold text-indigo-600 bg-indigo-50 dark:bg-indigo-900/20 hover:bg-indigo-100 rounded-lg transition-colors">
+                              <FileText className="w-3.5 h-3.5 mr-1.5" /> PDF
+                            </button>
+                            <button onClick={() => exportToExcel(c.name)} title="Download Excel" className="flex-1 flex items-center justify-center p-2 text-xs font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20 hover:bg-emerald-100 rounded-lg transition-colors">
+                              <FileSpreadsheet className="w-3.5 h-3.5 mr-1.5" /> Excel
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </>
+                  )}
+
+                  {activeTab === 'cohort' && (
+                    <>
+                      <div className="px-4 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-700 mb-1">Targeted Exports</div>
+                      
+                      <div className="p-2 space-y-2">
+                        <div className="space-y-1">
+                          <div className="text-[11px] font-bold text-slate-500 px-1">Just Group Statistics</div>
+                          <div className="flex gap-1">
+                            <button onClick={() => exportToPDF('group')} className="flex-1 flex items-center justify-center p-2 text-xs font-bold text-blue-600 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 rounded-lg transition-colors">
+                              <FileText className="w-3.5 h-3.5 mr-1" /> PDF
+                            </button>
+                            <button onClick={() => exportToExcel('group')} className="flex-1 flex items-center justify-center p-2 text-xs font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20 hover:bg-emerald-100 rounded-lg transition-colors">
+                              <FileSpreadsheet className="w-3.5 h-3.5 mr-1" /> Excel
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="space-y-1">
+                          <div className="text-[11px] font-bold text-slate-500 px-1">Entire Cohort Averages</div>
+                          <div className="flex gap-1">
+                            <button onClick={() => exportToPDF('entire')} className="flex-1 flex items-center justify-center p-2 text-xs font-bold text-purple-600 bg-purple-50 dark:bg-purple-900/20 hover:bg-purple-100 rounded-lg transition-colors">
+                              <FileText className="w-3.5 h-3.5 mr-1" /> PDF
+                            </button>
+                            <button onClick={() => exportToExcel('entire')} className="flex-1 flex items-center justify-center p-2 text-xs font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20 hover:bg-emerald-100 rounded-lg transition-colors">
+                              <FileSpreadsheet className="w-3.5 h-3.5 mr-1" /> Excel
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                </div>
               </div>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        )}
         </div>
       </div>
 
@@ -315,7 +410,6 @@ const ReportsView: React.FC = () => {
         {[
           { id: 'group', label: 'Group Overview', icon: Users },
           { id: 'individual', label: 'Individuals', icon: User },
-          { id: 'timeline', label: 'Timeline', icon: Calendar },
           { id: 'cohort', label: 'Cohort Benchmarks', icon: Layers },
         ].map((tab) => (
           <button
@@ -362,12 +456,12 @@ const ReportsView: React.FC = () => {
                     <circle cx="80" cy="80" r="70" className="stroke-primary-500" strokeWidth="12" fill="none" strokeDasharray="440" strokeDashoffset={440 - (440 * dashData.completionRate) / 100} strokeLinecap="round" style={{ transition: 'stroke-dashoffset 1s ease-in-out' }} />
                   </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className="text-3xl font-black text-slate-900 dark:text-white">{dashData.completionRate}%</span>
+                    <span className="text-3xl font-black text-slate-900 dark:text-white">{currentStats.completionRate}%</span>
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Done</span>
                   </div>
                 </div>
                 <h3 className="text-lg font-bold text-slate-900 dark:text-white mt-6">Overall Progress</h3>
-                <p className="text-sm text-slate-500 mt-2">{dashData.openTasks} tasks remaining out of {dashData.totalTasks}</p>
+                <p className="text-sm text-slate-500 mt-2">{currentStats.openTasks} tasks remaining out of {currentStats.totalTasks}</p>
               </div>
             </div>
           </div>
@@ -376,7 +470,7 @@ const ReportsView: React.FC = () => {
         {/* INDIVIDUALS REPORT */}
         {activeTab === 'individual' && (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-            {contributions.map((c, idx) => {
+            {currentContributions.map((c, idx) => {
               const percentage = c.total > 0 ? Math.round((c.completed / c.total) * 100) : 0;
               return (
                 <div key={idx} className="glass-card p-8 rounded-3xl hover:shadow-xl hover:shadow-slate-200/50 dark:hover:shadow-none transition-all">
@@ -414,58 +508,7 @@ const ReportsView: React.FC = () => {
           </div>
         )}
 
-        {/* TIMELINE REPORT */}
-        {activeTab === 'timeline' && (
-          <div className="glass-card p-10 rounded-[2.5rem]">
-            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-10 flex items-center">
-              <Activity className="w-5 h-5 mr-3 text-primary-600" />
-              Chronological Task Flow
-            </h3>
-            
-            <div className="relative border-l-2 border-slate-100 dark:border-slate-800 ml-4 space-y-12">
-              {sortedTasks.length > 0 ? sortedTasks.map((task, idx) => {
-                const dateObj = new Date(task.dueDate);
-                const isOverdue = dateObj < new Date() && task.status !== 'Done';
-                
-                return (
-                  <div key={idx} className="relative pl-8 group">
-                    <div className={`absolute -left-[11px] top-1 w-5 h-5 rounded-full border-4 border-white dark:border-slate-900 flex items-center justify-center ${task.status === 'Done' ? 'bg-emerald-500' : isOverdue ? 'bg-rose-500' : 'bg-primary-500'}`}>
-                    </div>
-                    
-                    <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
-                      <div>
-                        <div className="flex items-center space-x-3 mb-1">
-                          <h4 className={`text-lg font-bold ${task.status === 'Done' ? 'text-slate-500 line-through' : 'text-slate-900 dark:text-white'}`}>{task.title}</h4>
-                          <span className={`text-[10px] font-black px-2 py-1 rounded-md uppercase tracking-widest ${
-                            task.priority === 'High' ? 'bg-rose-50 text-rose-600' : 
-                            task.priority === 'Medium' ? 'bg-amber-50 text-amber-600' : 'bg-slate-100 text-slate-600'
-                          }`}>
-                            {task.priority}
-                          </span>
-                        </div>
-                        <p className="text-sm font-medium text-slate-500 flex items-center">
-                          <Clock className="w-4 h-4 mr-2 opacity-50" />
-                          Due: {dateObj.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-                        </p>
-                      </div>
-                      
-                      {task.assignee && (
-                        <div className="flex items-center space-x-2 bg-slate-50 dark:bg-slate-800/50 px-3 py-1.5 rounded-xl border border-slate-100 dark:border-slate-700">
-                           <div className="w-6 h-6 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-xs font-bold text-primary-600">
-                             {task.assignee.name[0]}
-                           </div>
-                           <span className="text-xs font-bold text-slate-700 dark:text-slate-300">{task.assignee.name}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                );
-              }) : (
-                <div className="py-12 text-center text-slate-500">No scheduled tasks found to generate timeline.</div>
-              )}
-            </div>
-          </div>
-        )}
+
 
         {/* COHORT REPORT */}
         {activeTab === 'cohort' && (
@@ -484,10 +527,10 @@ const ReportsView: React.FC = () => {
                   <div>
                     <div className="flex justify-between text-sm font-bold mb-3">
                       <span className="text-primary-300">Your Group Completion</span>
-                      <span>{dashData.completionRate}%</span>
+                      <span>{currentStats.completionRate}%</span>
                     </div>
                     <div className="h-4 w-full bg-slate-700 rounded-full overflow-hidden">
-                      <div className="h-full bg-primary-500 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.5)]" style={{ width: `${dashData.completionRate}%` }} />
+                      <div className="h-full bg-primary-500 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.5)]" style={{ width: `${currentStats.completionRate}%` }} />
                     </div>
                   </div>
                   
