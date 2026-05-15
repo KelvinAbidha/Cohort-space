@@ -77,7 +77,6 @@ const ReportsView: React.FC = () => {
 
   const getFilteredStats = () => {
     if (!dashData) return null;
-    if (!startDate && !endDate) return dashData;
 
     const total = filteredTasks.length;
     const completed = filteredTasks.filter(t => t.status === 'Done').length;
@@ -92,8 +91,6 @@ const ReportsView: React.FC = () => {
   };
 
   const getFilteredContributions = (): Contribution[] => {
-    if (!startDate && !endDate) return contributions;
-
     const memberMap: Record<string, { completed: number; total: number }> = {};
     
     // Initialize with all members from the original contributions to ensure we show everyone
