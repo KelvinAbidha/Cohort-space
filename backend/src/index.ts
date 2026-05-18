@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import { PrismaClient } from '@prisma/client';
+import path from 'path';
 import 'dotenv/config';
 
 const prisma = new PrismaClient();
@@ -9,6 +10,9 @@ const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
+
+// Serve static frontend files
+app.use(express.static(path.join(__dirname, '../../frontend/dist')));
 
 // 1. Individual User Login (Reg Number + PIN)
 app.post('/api/auth/login', async (req, res) => {
@@ -435,6 +439,11 @@ app.get('/api/meta', async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: 'Internal Server Error' });
     }
+});
+
+// Catch-all route to serve the React app
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../frontend/dist/index.html'));
 });
 
 app.listen(PORT, () => {

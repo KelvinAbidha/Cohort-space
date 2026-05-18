@@ -22,7 +22,7 @@ const WorkspaceAccess: React.FC = () => {
     const payload = isRegistering ? { name, regNumber, pin } : { regNumber, pin };
 
     try {
-      const response = await axios.post(`http://localhost:5000/api/auth/${endpoint}`, payload);
+      const response = await axios.post(`/api/auth/${endpoint}`, payload);
 
       if (response.data.success) {
         localStorage.setItem('userId', response.data.userId.toString());

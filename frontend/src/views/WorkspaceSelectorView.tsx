@@ -51,7 +51,7 @@ const WorkspaceSelectorView: React.FC = () => {
 
   const fetchGroups = useCallback(async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/users/${userId}/workspaces`);
+      const res = await axios.get(`/api/users/${userId}/workspaces`);
       setGroups(res.data);
     } catch (err) {
       console.error('Error fetching workspaces', err);
@@ -62,7 +62,7 @@ const WorkspaceSelectorView: React.FC = () => {
 
   const fetchUnits = useCallback(async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/units');
+      const res = await axios.get('/api/units');
       setUnits(res.data);
     } catch (err) {
       console.error('Error fetching units', err);
@@ -88,7 +88,7 @@ const WorkspaceSelectorView: React.FC = () => {
     setJoinLoading(true);
     setJoinError('');
     try {
-      const res = await axios.post('http://localhost:5000/api/workspaces/join', {
+      const res = await axios.post('/api/workspaces/join', {
         userId,
         code: joinCode
       });
@@ -109,7 +109,7 @@ const WorkspaceSelectorView: React.FC = () => {
     setCreateLoading(true);
     setCreateError('');
     try {
-      const res = await axios.post('http://localhost:5000/api/workspaces', {
+      const res = await axios.post('/api/workspaces', {
         unitId: createData.unitId,
         groupNumber: createData.groupNumber,
         userId

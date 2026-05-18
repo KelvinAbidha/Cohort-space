@@ -40,7 +40,7 @@ const ResourceVaultView: React.FC = () => {
 
   const fetchResources = useCallback(async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/resources?workspaceId=${workspaceId}`);
+      const res = await axios.get(`/api/resources?workspaceId=${workspaceId}`);
       setResources(res.data);
     } catch (err) {
       console.error('Error fetching resources', err);
@@ -49,7 +49,7 @@ const ResourceVaultView: React.FC = () => {
 
   const fetchMeta = useCallback(async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/meta?workspaceId=${workspaceId}`);
+      const res = await axios.get(`/api/meta?workspaceId=${workspaceId}`);
       setMembers(res.data.members);
     } catch (err) {
       console.error('Error fetching meta', err);
@@ -75,7 +75,7 @@ const ResourceVaultView: React.FC = () => {
   const handleAddResource = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/resources', {
+      await axios.post('/api/resources', {
         ...newResource,
         workspaceId
       });
@@ -90,7 +90,7 @@ const ResourceVaultView: React.FC = () => {
   const handleDeleteResource = async (id: number) => {
     if (!window.confirm('Are you sure you want to remove this resource?')) return;
     try {
-      await axios.delete(`http://localhost:5000/api/resources/${id}`);
+      await axios.delete(`/api/resources/${id}`);
       fetchResources();
     } catch (err) {
       console.error('Error deleting resource', err);

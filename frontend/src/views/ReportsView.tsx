@@ -55,9 +55,9 @@ const ReportsView: React.FC = () => {
     const fetchReportData = async () => {
       try {
         const [dashRes, contribRes, taskRes] = await Promise.all([
-          axios.get(`http://localhost:5000/api/dashboard?workspaceId=${workspaceId}`),
-          axios.get(`http://localhost:5000/api/members/contributions?workspaceId=${workspaceId}`),
-          axios.get(`http://localhost:5000/api/tasks?workspaceId=${workspaceId}`)
+          axios.get(`/api/dashboard?workspaceId=${workspaceId}`),
+          axios.get(`/api/members/contributions?workspaceId=${workspaceId}`),
+          axios.get(`/api/tasks?workspaceId=${workspaceId}`)
         ]);
         setDashData(dashRes.data);
         setContributions(contribRes.data);

@@ -42,7 +42,7 @@ const TaskBoardView: React.FC = () => {
 
   const fetchTasks = useCallback(async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/tasks?workspaceId=${workspaceId}`);
+      const res = await axios.get(`/api/tasks?workspaceId=${workspaceId}`);
       setTasks(res.data);
     } catch (err) {
       console.error('Error fetching tasks', err);
@@ -51,7 +51,7 @@ const TaskBoardView: React.FC = () => {
 
   const fetchMeta = useCallback(async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/meta?workspaceId=${workspaceId}`);
+      const res = await axios.get(`/api/meta?workspaceId=${workspaceId}`);
       setMembers(res.data.members);
       setMilestones(res.data.milestones);
     } catch (err) {
@@ -77,7 +77,7 @@ const TaskBoardView: React.FC = () => {
 
   const handleStatusChange = async (taskId: number, newStatus: string) => {
     try {
-      await axios.put(`http://localhost:5000/api/tasks/${taskId}`, { status: newStatus });
+      await axios.put(`/api/tasks/${taskId}`, { status: newStatus });
       fetchTasks();
     } catch (err) {
       console.error('Error updating task', err);
@@ -87,7 +87,7 @@ const TaskBoardView: React.FC = () => {
   const handleDeleteTask = async (taskId: number) => {
     if (!window.confirm('Are you sure you want to delete this task?')) return;
     try {
-      await axios.delete(`http://localhost:5000/api/tasks/${taskId}`);
+      await axios.delete(`/api/tasks/${taskId}`);
       fetchTasks();
     } catch (err) {
       console.error('Error deleting task', err);
@@ -97,7 +97,7 @@ const TaskBoardView: React.FC = () => {
   const handleCreateTask = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/tasks', {
+      await axios.post('/api/tasks', {
         ...newTask,
         workspaceId
       });

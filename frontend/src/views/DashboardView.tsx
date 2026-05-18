@@ -35,8 +35,8 @@ const DashboardView: React.FC = () => {
     const fetchData = async () => {
       try {
         const [dashRes, contribRes] = await Promise.all([
-          axios.get(`http://localhost:5000/api/dashboard?workspaceId=${workspaceId}`),
-          axios.get(`http://localhost:5000/api/members/contributions?workspaceId=${workspaceId}`)
+          axios.get(`/api/dashboard?workspaceId=${workspaceId}`),
+          axios.get(`/api/members/contributions?workspaceId=${workspaceId}`)
         ]);
         setData(dashRes.data);
         setContributions(contribRes.data);

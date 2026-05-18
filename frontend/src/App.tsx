@@ -42,7 +42,7 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     if (!window.confirm("SECOND CONFIRMATION: Are you absolutely certain you want to destroy this workspace?")) return;
 
     try {
-      await axios.delete(`http://localhost:5000/api/workspaces/${workspaceId}`);
+      await axios.delete(`/api/workspaces/${workspaceId}`);
       localStorage.clear();
       navigate('/access');
     } catch (err) {
