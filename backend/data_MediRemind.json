@@ -1,0 +1,194 @@
+[
+  [
+    "STQA Unit Presentation — MediRemind Task Database"
+  ],
+  [
+    "Group_Name",
+    "Member_Name",
+    "Registration_Number",
+    "Task_Title",
+    "Status",
+    "Priority",
+    "Due_Date"
+  ],
+  [
+    "MediRemind",
+    "Jessy Cheruiyot",
+    "SCT212-0333/2023",
+    "Project Proposal Writing",
+    "Done",
+    "High",
+    46359
+  ],
+  [
+    "MediRemind",
+    "Duncan maina",
+    "SCT212-0478/2023",
+    "Healthcare Appointment System Requirement Gathering",
+    "Done",
+    "High",
+    46359
+  ],
+  [
+    "MediRemind",
+    "Gabriella Muthoni",
+    "SCT212-0330/2023",
+    "Functional Requirements Specification",
+    "Done",
+    "High",
+    46359
+  ],
+  [
+    "MediRemind",
+    "Michael Kinyunzu",
+    "SCT212-0482/2023",
+    "Non-Functional Requirements Specification",
+    "Done",
+    "High",
+    46359
+  ],
+  [
+    "MediRemind",
+    "Jessy Cheruiyot",
+    "SCT212-0333/2023",
+    "Patient Appointment Workflow Design",
+    "Done",
+    "Medium",
+    46359
+  ],
+  [
+    "MediRemind",
+    "Duncan maina",
+    "SCT212-0478/2023",
+    "Doctor Schedule Management Planning",
+    "Done",
+    "High",
+    "29/3/2026"
+  ],
+  [
+    "MediRemind",
+    "Gabriella Muthoni",
+    "SCT212-0330/2023",
+    "UI/UX Design for Patient Dashboard",
+    "Done",
+    "Medium",
+    "29/3/2026"
+  ],
+  [
+    "MediRemind",
+    "Michael Kinyunzu",
+    "SCT212-0482/2023",
+    "Database Schema Design for Appointments",
+    "Done",
+    "High",
+    "29/3/2026"
+  ],
+  [
+    "MediRemind",
+    "Jessy Cheruiyot",
+    "SCT212-0333/2023",
+    "System Architecture & API Planning",
+    "Done",
+    "High",
+    "16/4/2026"
+  ],
+  [
+    "MediRemind",
+    "Duncan maina",
+    "SCT212-0478/2023",
+    "Frontend Development Setup",
+    "Done",
+    "High",
+    "16/4/2026"
+  ],
+  [
+    "MediRemind",
+    "Gabriella Muthoni",
+    "SCT212-0330/2023",
+    "Backend Development Setup",
+    "Done",
+    "High",
+    "16/4/2026"
+  ],
+  [
+    "MediRemind",
+    "Michael Kinyunzu",
+    "SCT212-0482/2023",
+    "Patient Registration & Login Module",
+    "Done",
+    "Medium",
+    46117
+  ],
+  [
+    "MediRemind",
+    "Jessy Cheruiyot",
+    "SCT212-0333/2023",
+    "Appointment Scheduling Feature",
+    "Done",
+    "High",
+    46117
+  ],
+  [
+    "MediRemind",
+    "Duncan maina",
+    "SCT212-0478/2023",
+    "Doctor Availability Management Module",
+    "Done",
+    "High",
+    46117
+  ],
+  [
+    "MediRemind",
+    "Gabriella Muthoni",
+    "SCT212-0330/2023",
+    "Automated SMS & Email Reminder Integration",
+    "In Progress",
+    "High",
+    46117
+  ],
+  [
+    "MediRemind",
+    "Michael Kinyunzu",
+    "SCT212-0482/2023",
+    "Appointment Tracking & Reporting Module",
+    "In Progress",
+    "High",
+    "15/5/2026"
+  ],
+  [
+    "MediRemind",
+    "Jessy Cheruiyot",
+    "SCT212-0333/2023",
+    "Centralized Admin Dashboard Development",
+    "Done",
+    "High",
+    "15/5/2026"
+  ],
+  [
+    "MediRemind",
+    "Duncan maina",
+    "SCT212-0478/2023",
+    "Push Notification System Development",
+    "Done",
+    "High",
+    "15/5/2026"
+  ],
+  [
+    "MediRemind",
+    "Gabriella Muthoni",
+    "SCT212-0330/2023",
+    "System Testing & Bug Fixing",
+    "To Do",
+    "Medium",
+    "15/5/2026"
+  ],
+  [
+    "MediRemind",
+    "Michael Kinyunzu",
+    "SCT212-0482/2023",
+    "Deployment, Documentation & Go Live",
+    "To Do",
+    "High",
+    "15/5/2026"
+  ]
+]

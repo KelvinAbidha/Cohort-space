@@ -1,0 +1,230 @@
+[
+  [
+    "STQA Unit Presentation — SmartTraffic Vision Task Database"
+  ],
+  [
+    "Group_Name",
+    "Member_Name",
+    "Registration_Number",
+    "Task_Title",
+    "Status",
+    "Priority",
+    "Due_Date"
+  ],
+  [
+    "SmartTraffic Vision",
+    "Brian Kipkirui",
+    "SCT212-0057/2023",
+    "Project Proposal Writing",
+    "Done",
+    "High",
+    46091
+  ],
+  [
+    "SmartTraffic Vision",
+    "Micah Sagero",
+    "SCT212-0056/2023",
+    "Problem Statement & Opportunity Analysis",
+    "Done",
+    "High",
+    46091
+  ],
+  [
+    "SmartTraffic Vision",
+    "John Nyongesa",
+    "SCT212-0710/2022",
+    "Functional Requirements Specification",
+    "Done",
+    "High",
+    "2026-03-10"
+  ],
+  [
+    "SmartTraffic Vision",
+    "Ian Mandila",
+    "SCT212-0162/2022",
+    "Non-Functional Requirements Specification",
+    "Done",
+    "Medium",
+    "2026-03-10"
+  ],
+  [
+    "SmartTraffic Vision",
+    "Brian Kipkirui",
+    "SCT212-0057/2023",
+    "Software Tools Selection (Python, OpenCV, YOLO)",
+    "Done",
+    "Medium",
+    "2026-03-20"
+  ],
+  [
+    "SmartTraffic Vision",
+    "Micah Sagero",
+    "SCT212-0056/2023",
+    "Hardware Tools Selection (GPU Machine, IP Camera)",
+    "Done",
+    "Medium",
+    "2026-03-20"
+  ],
+  [
+    "SmartTraffic Vision",
+    "John Nyongesa",
+    "SCT212-0710/2022",
+    "System Architecture Diagram (Draw.io/Lucidchart)",
+    "Done",
+    "High",
+    "2026-03-25"
+  ],
+  [
+    "SmartTraffic Vision",
+    "Ian Mandila",
+    "SCT212-0162/2022",
+    "Database Design – PostgreSQL/MySQL Schema",
+    "Done",
+    "High",
+    "2026-03-25"
+  ],
+  [
+    "SmartTraffic Vision",
+    "Brian Kipkirui",
+    "SCT212-0057/2023",
+    "UI Mockups for Alert & Report Dashboard",
+    "Done",
+    "High",
+    "2026-03-28"
+  ],
+  [
+    "SmartTraffic Vision",
+    "Micah Sagero",
+    "SCT212-0056/2023",
+    "Video Stream Acquisition Module (FR-i)",
+    "In Progress",
+    "High",
+    "2026-04-15"
+  ],
+  [
+    "SmartTraffic Vision",
+    "John Nyongesa",
+    "SCT212-0710/2022",
+    "Vehicle Detection & Classification – YOLO (FR-ii)",
+    "In Progress",
+    "High",
+    "2026-04-15"
+  ],
+  [
+    "SmartTraffic Vision",
+    "Ian Mandila",
+    "SCT212-0162/2022",
+    "Object Tracking Across Frames (FR-iii)",
+    "In Progress",
+    "High",
+    "2026-04-18"
+  ],
+  [
+    "SmartTraffic Vision",
+    "Brian Kipkirui",
+    "SCT212-0057/2023",
+    "Signal Jumping Violation Detection (FR-iv-a)",
+    "To Do",
+    "High",
+    "2026-04-22"
+  ],
+  [
+    "SmartTraffic Vision",
+    "Micah Sagero",
+    "SCT212-0056/2023",
+    "Wrong-Way Driving Detection (FR-iv-b)",
+    "To Do",
+    "High",
+    "2026-04-22"
+  ],
+  [
+    "SmartTraffic Vision",
+    "John Nyongesa",
+    "SCT212-0710/2022",
+    "Alert Generation & Evidence Capture (FR-v/FR-vi)",
+    "To Do",
+    "High",
+    "2026-04-25"
+  ],
+  [
+    "SmartTraffic Vision",
+    "Ian Mandila",
+    "SCT212-0162/2022",
+    "Data Logging to Secure Database (FR-vii)",
+    "To Do",
+    "High",
+    "2026-04-25"
+  ],
+  [
+    "SmartTraffic Vision",
+    "Brian Kipkirui",
+    "SCT212-0057/2023",
+    "Report Generation Module – Daily/Weekly/Monthly (FR-viii)",
+    "To Do",
+    "Medium",
+    "2026-04-28"
+  ],
+  [
+    "SmartTraffic Vision",
+    "Micah Sagero",
+    "SCT212-0056/2023",
+    "Accuracy & Detection Rate Testing (≥90% target)",
+    "To Do",
+    "High",
+    "2026-05-05"
+  ],
+  [
+    "SmartTraffic Vision",
+    "John Nyongesa",
+    "SCT212-0710/2022",
+    "Real-Time Performance & Latency Testing",
+    "To Do",
+    "High",
+    "2026-05-05"
+  ],
+  [
+    "SmartTraffic Vision",
+    "Ian Mandila",
+    "SCT212-0162/2022",
+    "Robustness Testing (weather/lighting conditions)",
+    "To Do",
+    "Medium",
+    "2026-05-08"
+  ],
+  [
+    "SmartTraffic Vision",
+    "Brian Kipkirui",
+    "SCT212-0057/2023",
+    "Security & Role-Based Access Testing",
+    "To Do",
+    "Medium",
+    "2026-05-10"
+  ],
+  [
+    "SmartTraffic Vision",
+    "Micah Sagero",
+    "SCT212-0056/2023",
+    "Final Project Report & Documentation",
+    "To Do",
+    "Medium",
+    "2026-05-12"
+  ],
+  [
+    "SmartTraffic Vision",
+    "John Nyongesa",
+    "SCT212-0710/2022",
+    "Pre-Go Live Testing & Bug Fixes",
+    "To Do",
+    "High",
+    "2026-05-14"
+  ],
+  [
+    "SmartTraffic Vision",
+    "Ian Mandila",
+    "SCT212-0162/2022",
+    "Live Demonstration & Final Defense Presentation",
+    "To Do",
+    "High",
+    "2026-05-17"
+  ]
+]

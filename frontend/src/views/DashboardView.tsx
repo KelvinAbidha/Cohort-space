@@ -16,6 +16,7 @@ interface DashboardData {
   completionRate: number;
   activeMembers: number;
   upcomingDeadlines: any[];
+  fullTimeline: any[];
 }
 
 interface Contribution {
@@ -60,7 +61,7 @@ const DashboardView: React.FC = () => {
   ];
 
   const displayedDeadlines = showAllDeadlines 
-    ? data.upcomingDeadlines 
+    ? data.fullTimeline 
     : data.upcomingDeadlines.slice(0, 5);
 
   return (
@@ -183,15 +184,13 @@ const DashboardView: React.FC = () => {
             )}
           </div>
 
-          {data.upcomingDeadlines.length > 5 && (
-            <button 
-              onClick={() => setShowAllDeadlines(!showAllDeadlines)}
-              className="w-full mt-12 py-5 text-[10px] font-black text-primary-600 dark:text-primary-400 bg-primary-50/50 dark:bg-primary-900/20 rounded-[2rem] hover:bg-primary-100 dark:hover:bg-primary-900/40 transition-all duration-300 uppercase tracking-[0.3em] flex items-center justify-center border border-primary-100 dark:border-primary-900/50"
-            >
-              {showAllDeadlines ? 'Show Less' : 'Full Schedule'}
-              <ChevronRight className={`w-4 h-4 ml-3 transition-transform duration-500 ${showAllDeadlines ? 'rotate-90' : ''}`} />
-            </button>
-          )}
+          <button 
+            onClick={() => setShowAllDeadlines(!showAllDeadlines)}
+            className="w-full mt-10 py-4 text-xs font-black text-primary-600 bg-primary-50/50 rounded-2xl hover:bg-primary-50 transition-all duration-300 uppercase tracking-[0.2em] flex items-center justify-center"
+          >
+            {showAllDeadlines ? 'Collapse Schedule' : 'Full Schedule'}
+            <ChevronRight className={`w-4 h-4 ml-2 transition-transform duration-300 ${showAllDeadlines ? 'rotate-90' : ''}`} />
+          </button>
         </div>
       </div>
     </div>

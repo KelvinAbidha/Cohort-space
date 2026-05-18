@@ -1,0 +1,158 @@
+[
+  [
+    "STQA Unit Presentation — PochiWise Task Database"
+  ],
+  [
+    "Group_Name",
+    "Member_Name",
+    "Registration_Number",
+    "Task_Title",
+    "Status",
+    "Priority",
+    "Due_Date"
+  ],
+  [
+    "PochiWise",
+    "Mercy Nzambi",
+    "SCT212-0058/2023",
+    "Project Proposal Writing",
+    "Done",
+    "High",
+    46329
+  ],
+  [
+    "PochiWise",
+    "Adrian Kagambi",
+    "SCT212-0305/2023",
+    "Functional Requirements Specification",
+    "Done",
+    "High",
+    46329
+  ],
+  [
+    "PochiWise",
+    "Kerry Nkiria",
+    "SCT212-0327/2023",
+    "Non-Functional Requirements Specification",
+    "Done",
+    "Medium",
+    46329
+  ],
+  [
+    "PochiWise",
+    "Prudence Njogu",
+    "SCT212-0052/2030",
+    "Competitor Analysis for Pochiwise",
+    "Done",
+    "Medium",
+    "29/3/2026"
+  ],
+  [
+    "PochiWise",
+    "Mercy Nzambi",
+    "SCT212-0058/2023",
+    "UI/UX Wireframe Design",
+    "Done",
+    "Medium",
+    "29/3/2026"
+  ],
+  [
+    "PochiWise",
+    "Adrian Kagambi",
+    "SCT212-0305/2023",
+    "Database Schema Design",
+    "Done",
+    "Medium",
+    "30/3/2026"
+  ],
+  [
+    "PochiWise",
+    "Kerry Nkiria",
+    "SCT212-0327/2023",
+    "Backend Development Setup",
+    "Done",
+    "High",
+    "16/4/2026"
+  ],
+  [
+    "PochiWise",
+    "Prudence Njogu",
+    "SCT212-0052/2030",
+    "API Structure Planning",
+    "Done",
+    "High",
+    "16/4/2026"
+  ],
+  [
+    "PochiWise",
+    "Mercy Nzambi",
+    "SCT212-0058/2023",
+    "User Authentication",
+    "Done",
+    "High",
+    "16/4/2026"
+  ],
+  [
+    "PochiWise",
+    "Adrian Kagambi",
+    "SCT212-0305/2023",
+    "Profile Management Feature",
+    "Done",
+    "Medium",
+    46117
+  ],
+  [
+    "PochiWise",
+    "Kerry Nkiria",
+    "SCT212-0327/2023",
+    "Implementing the remaining features",
+    "Done",
+    "Medium",
+    46117
+  ],
+  [
+    "PochiWise",
+    "Prudence Njogu",
+    "SCT212-0052/2030",
+    "Performance testing",
+    "Done",
+    "Medium",
+    46117
+  ],
+  [
+    "PochiWise",
+    "Mercy Nzambi",
+    "SCT212-0058/2023",
+    "System Reliability & Performance Testing",
+    "Done",
+    "High",
+    46117
+  ],
+  [
+    "PochiWise",
+    "Adrian Kagambi",
+    "SCT212-0305/2023",
+    "Testing & Bug Fixing",
+    "In Progress",
+    "High",
+    "15/5/2026"
+  ],
+  [
+    "PochiWise",
+    "Kerry Nkiria",
+    "SCT212-0327/2023",
+    "User Manual & Documentation",
+    "In Progress",
+    "High",
+    "15/5/2026"
+  ],
+  [
+    "PochiWise",
+    "Prudence Njogu",
+    "SCT212-0052/2030",
+    "Deployment & Go Live Preparation",
+    "In Progress",
+    "High",
+    "15/5/2026"
+  ]
+]

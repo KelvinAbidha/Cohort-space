@@ -1,0 +1,194 @@
+[
+  [
+    "STQA Unit Presentation — Cohort Space Task Database"
+  ],
+  [
+    "Group_Name",
+    "Member_Name",
+    "Registration_Number",
+    "Task_Title",
+    "Status",
+    "Priority",
+    "Due_Date"
+  ],
+  [
+    "Cohort Space",
+    "Kelvin Otieno Abidha",
+    "SCT212-0063/2023",
+    "Project Proposal Writing",
+    "Done",
+    "High",
+    "2025-03-10"
+  ],
+  [
+    "Cohort Space",
+    "Cynthia Vaati Mbithi",
+    "SCT212-0050/2023",
+    "Problem Statement Definition",
+    "Done",
+    "High",
+    "2025-03-10"
+  ],
+  [
+    "Cohort Space",
+    "Munene Josphat",
+    "SCT212-0346/2023",
+    "Functional Requirements Specification",
+    "Done",
+    "High",
+    "2025-03-10"
+  ],
+  [
+    "Cohort Space",
+    "Dekow Mohamed",
+    "SCT212-0085/2023",
+    "Non-Functional Requirements Specification",
+    "Done",
+    "Medium",
+    "2025-03-10"
+  ],
+  [
+    "Cohort Space",
+    "Kelvin Otieno Abidha",
+    "SCT212-0063/2023",
+    "Hardware & Software Tools Selection",
+    "Done",
+    "Medium",
+    "2025-03-10"
+  ],
+  [
+    "Cohort Space",
+    "Cynthia Vaati Mbithi",
+    "SCT212-0050/2023",
+    "UI/UX Wireframe Design (Figma)",
+    "Done",
+    "High",
+    "2025-03-20"
+  ],
+  [
+    "Cohort Space",
+    "Munene Josphat",
+    "SCT212-0346/2023",
+    "Database Schema Design (PostgreSQL)",
+    "Done",
+    "High",
+    "2025-03-20"
+  ],
+  [
+    "Cohort Space",
+    "Dekow Mohamed",
+    "SCT212-0085/2023",
+    "Frontend Development (React.js)",
+    "Done",
+    "High",
+    "2025-04-05"
+  ],
+  [
+    "Cohort Space",
+    "Kelvin Otieno Abidha",
+    "SCT212-0063/2023",
+    "Backend API Development (Node.js)",
+    "Done",
+    "High",
+    "2025-04-05"
+  ],
+  [
+    "Cohort Space",
+    "Cynthia Vaati Mbithi",
+    "SCT212-0050/2023",
+    "PIN-Protected Workspace (FR-01)",
+    "Done",
+    "High",
+    "2025-04-10"
+  ],
+  [
+    "Cohort Space",
+    "Munene Josphat",
+    "SCT212-0346/2023",
+    "Resource Vault Implementation (FR-02)",
+    "Done",
+    "High",
+    "2025-04-10"
+  ],
+  [
+    "Cohort Space",
+    "Dekow Mohamed",
+    "SCT212-0085/2023",
+    "Task Management Module (FR-03)",
+    "Done",
+    "High",
+    "2025-04-15"
+  ],
+  [
+    "Cohort Space",
+    "Kelvin Otieno Abidha",
+    "SCT212-0063/2023",
+    "Milestone Tracking Feature (FR-04)",
+    "Done",
+    "Medium",
+    "2025-04-15"
+  ],
+  [
+    "Cohort Space",
+    "Cynthia Vaati Mbithi",
+    "SCT212-0050/2023",
+    "Dashboard & Analytics (FR-05)",
+    "Done",
+    "Medium",
+    "2025-04-20"
+  ],
+  [
+    "Cohort Space",
+    "Munene Josphat",
+    "SCT212-0346/2023",
+    "Selenium Automated Test Suite",
+    "Done",
+    "High",
+    "2025-04-25"
+  ],
+  [
+    "Cohort Space",
+    "Dekow Mohamed",
+    "SCT212-0085/2023",
+    "Cross-Browser Compatibility Testing",
+    "Done",
+    "Medium",
+    "2025-04-25"
+  ],
+  [
+    "Cohort Space",
+    "Kelvin Otieno Abidha",
+    "SCT212-0063/2023",
+    "Performance & Load Testing (NR-01)",
+    "Done",
+    "High",
+    "2025-04-28"
+  ],
+  [
+    "Cohort Space",
+    "Cynthia Vaati Mbithi",
+    "SCT212-0050/2023",
+    "User Manual Documentation",
+    "Done",
+    "Medium",
+    "2025-04-30"
+  ],
+  [
+    "Cohort Space",
+    "Munene Josphat",
+    "SCT212-0346/2023",
+    "Pre-Go Live Testing & Bug Fixes",
+    "In Progress",
+    "High",
+    "2025-05-05"
+  ],
+  [
+    "Cohort Space",
+    "Dekow Mohamed",
+    "SCT212-0085/2023",
+    "Final Defense Presentation",
+    "To Do",
+    "High",
+    "2025-05-10"
+  ]
+]

@@ -177,6 +177,22 @@ app.get('/api/dashboard', async (req, res) => {
       ...tasksWithDeadlines.map(t => ({ ...t, type: 'task' }))
     ].sort((a, b) => new Date(a.dueDate!).getTime() - new Date(b.dueDate!).getTime());
 
+    // Fetch ALL milestones and tasks for the full timeline history
+    const allMilestones = await prisma.milestone.findMany({
+      where: { workspaceId },
+      orderBy: { dueDate: 'asc' }
+    });
+
+    const allTasksWithDeadlines = await prisma.task.findMany({
+      where: { workspaceId, dueDate: { not: null } },
+      orderBy: { dueDate: 'asc' }
+    });
+
+    const fullTimeline = [
+      ...allMilestones.map(m => ({ ...m, type: 'milestone' })),
+      ...allTasksWithDeadlines.map(t => ({ ...t, type: 'task' }))
+    ].sort((a, b) => new Date(a.dueDate!).getTime() - new Date(b.dueDate!).getTime());
+
     const membersCount = await prisma.member.count({ where: { workspaceId } });
     const completionRate = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
     
@@ -186,7 +202,8 @@ app.get('/api/dashboard', async (req, res) => {
       milestonesDue: deadlines.length,
       completionRate,
       activeMembers: membersCount,
-      upcomingDeadlines: deadlines
+      upcomingDeadlines: deadlines,
+      fullTimeline: fullTimeline
     });
   } catch (error) {
     res.status(500).json({ error: 'Internal Server Error' });

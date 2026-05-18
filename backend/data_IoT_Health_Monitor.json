@@ -1,0 +1,230 @@
+[
+  [
+    "STQA Unit Presentation — Smart IoT Health Monitoring & Alert System Task Database"
+  ],
+  [
+    "Group_Name",
+    "Member_Name",
+    "Registration_Number",
+    "Task_Title",
+    "Status",
+    "Priority",
+    "Due_Date"
+  ],
+  [
+    "IoT Health Monitor",
+    "Shemiramoth Mugo",
+    "SCT212-0061/2023",
+    "Project Proposal Writing",
+    "Done",
+    "High",
+    "2026-03-10"
+  ],
+  [
+    "IoT Health Monitor",
+    "Samuel Kuria",
+    "SCT212-0476/2023",
+    "Problem Statement & Opportunity Analysis",
+    "Done",
+    "High",
+    "2026-03-10"
+  ],
+  [
+    "IoT Health Monitor",
+    "Lee Kariuki",
+    "SCT212-0049/2023",
+    "Functional Requirements Specification",
+    "Done",
+    "High",
+    "2026-03-10"
+  ],
+  [
+    "IoT Health Monitor",
+    "Cecil Kioko",
+    "SCT212-0047/2023",
+    "Non-Functional Requirements Specification",
+    "Done",
+    "Medium",
+    "2026-03-10"
+  ],
+  [
+    "IoT Health Monitor",
+    "Shemiramoth Mugo",
+    "SCT212-0061/2023",
+    "Hardware Tools Selection (ESP32, Sensors)",
+    "Done",
+    "Medium",
+    "2026-03-20"
+  ],
+  [
+    "IoT Health Monitor",
+    "Samuel Kuria",
+    "SCT212-0476/2023",
+    "Software Tools Selection (Arduino IDE, Firebase)",
+    "Done",
+    "Medium",
+    "2026-03-20"
+  ],
+  [
+    "IoT Health Monitor",
+    "Lee Kariuki",
+    "SCT212-0049/2023",
+    "Circuit & Schematic Diagram Design",
+    "Done",
+    "High",
+    "2026-03-25"
+  ],
+  [
+    "IoT Health Monitor",
+    "Cecil Kioko",
+    "SCT212-0047/2023",
+    "Database Schema Design (MySQL/Firebase)",
+    "Done",
+    "High",
+    "2026-03-25"
+  ],
+  [
+    "IoT Health Monitor",
+    "Shemiramoth Mugo",
+    "SCT212-0061/2023",
+    "UI/UX Dashboard Wireframe Design",
+    "Done",
+    "High",
+    "2026-03-28"
+  ],
+  [
+    "IoT Health Monitor",
+    "Samuel Kuria",
+    "SCT212-0476/2023",
+    "Microcontroller Programming (Arduino IDE)",
+    "In Progress",
+    "High",
+    "2026-04-15"
+  ],
+  [
+    "IoT Health Monitor",
+    "Lee Kariuki",
+    "SCT212-0049/2023",
+    "Heart Rate Sensor Integration (FR-01/FR-03)",
+    "In Progress",
+    "High",
+    "2026-04-15"
+  ],
+  [
+    "IoT Health Monitor",
+    "Cecil Kioko",
+    "SCT212-0047/2023",
+    "Temperature Sensor Integration (FR-02)",
+    "In Progress",
+    "High",
+    "2026-04-15"
+  ],
+  [
+    "IoT Health Monitor",
+    "Shemiramoth Mugo",
+    "SCT212-0061/2023",
+    "Real-Time Data Display on OLED/Dashboard (FR-04)",
+    "To Do",
+    "High",
+    "2026-04-20"
+  ],
+  [
+    "IoT Health Monitor",
+    "Samuel Kuria",
+    "SCT212-0476/2023",
+    "MQTT Protocol Data Transmission (FR-05)",
+    "To Do",
+    "High",
+    "2026-04-22"
+  ],
+  [
+    "IoT Health Monitor",
+    "Lee Kariuki",
+    "SCT212-0049/2023",
+    "Historical Health Data Storage (FR-06)",
+    "To Do",
+    "Medium",
+    "2026-04-25"
+  ],
+  [
+    "IoT Health Monitor",
+    "Cecil Kioko",
+    "SCT212-0047/2023",
+    "Alert System – OLED/Buzzer/Push Notification (FR-07)",
+    "To Do",
+    "High",
+    "2026-04-25"
+  ],
+  [
+    "IoT Health Monitor",
+    "Shemiramoth Mugo",
+    "SCT212-0061/2023",
+    "Multi-Device Admin Monitoring (FR-09)",
+    "To Do",
+    "Medium",
+    "2026-04-28"
+  ],
+  [
+    "IoT Health Monitor",
+    "Samuel Kuria",
+    "SCT212-0476/2023",
+    "Sensor Accuracy & Unit Testing",
+    "To Do",
+    "High",
+    "2026-05-05"
+  ],
+  [
+    "IoT Health Monitor",
+    "Lee Kariuki",
+    "SCT212-0049/2023",
+    "Integration Testing – Sensor to Dashboard",
+    "To Do",
+    "High",
+    "2026-05-05"
+  ],
+  [
+    "IoT Health Monitor",
+    "Cecil Kioko",
+    "SCT212-0047/2023",
+    "Alert Threshold Testing (JUnit/NUnit)",
+    "To Do",
+    "High",
+    "2026-05-08"
+  ],
+  [
+    "IoT Health Monitor",
+    "Shemiramoth Mugo",
+    "SCT212-0061/2023",
+    "System Reliability & Performance Testing",
+    "To Do",
+    "Medium",
+    "2026-05-10"
+  ],
+  [
+    "IoT Health Monitor",
+    "Samuel Kuria",
+    "SCT212-0476/2023",
+    "Technical Manual & User Guide Documentation",
+    "To Do",
+    "Medium",
+    "2026-05-12"
+  ],
+  [
+    "IoT Health Monitor",
+    "Lee Kariuki",
+    "SCT212-0049/2023",
+    "Pre-Go Live Testing & Bug Fixes",
+    "To Do",
+    "High",
+    "2026-05-14"
+  ],
+  [
+    "IoT Health Monitor",
+    "Cecil Kioko",
+    "SCT212-0047/2023",
+    "Final Defense Presentation",
+    "To Do",
+    "High",
+    "2026-05-17"
+  ]
+]
