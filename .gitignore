@@ -18,11 +18,11 @@ build/
 .env.test.local
 .env.production.local
 
-# Database
-*.db
-*.db-journal
-/backend/dev.db
-/backend/dev.db-journal
+# Database - included for deployment with pre-loaded presentation data
+# *.db
+# *.db-journal
+# /backend/dev.db
+# /backend/dev.db-journal
 
 # Logs
 npm-debug.log*
