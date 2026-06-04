@@ -180,10 +180,6 @@ const ResourceVaultView: React.FC = () => {
                         className="hover:opacity-80 transition-opacity block truncate max-w-md"
                       >
                         <p className="text-[15px] font-black text-slate-800 dark:text-white tracking-tight hover:text-primary-600 dark:hover:text-primary-400 transition-colors">{res.title}</p>
-                        <p className="text-[11px] font-bold text-slate-400 dark:text-slate-500 mt-1 truncate flex items-center tracking-wide">
-                          {res.type === 'Link' ? <Globe className="w-3 h-3 mr-1.5" /> : <FileBox className="w-3 h-3 mr-1.5" />}
-                          {res.url}
-                        </p>
                       </a>
                     </div>
                   </td>
